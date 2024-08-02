@@ -1,144 +1,142 @@
 ---
-sidebarLabel: Quick Start
-title: Solana Quick Start Guide
+sidebarLabel: Быстрый старт
+title: Краткое руководство Solana
 sidebarSortOrder: 1
 ---
 
-Welcome to the Solana Quick Start Guide! This hands-on guide will introduce you
-to the core concepts for building on Solana, regardless of your prior
-experience. By the end of this tutorial, you'll have a basic foundation in
-Solana development and be ready to explore more advanced topics.
+Добро пожаловать в краткое руководство Solana! 
+Это практическое руководство познакомит вас с основными концепциями 
+разработки на Solana, независимо от вашего предыдущего опыта. 
+К концу этого руководства вы получите базовые знания по разработке Solana 
+и будете готовы к изучению более сложных тем.
 
-## What You'll Learn
+## Что вы узнаете
 
-In this tutorial, you'll learn about:
+В этом уроке вы узнаете о:
 
-- Understanding Accounts: Explore how data is stored on the Solana network.
-- Sending Transactions: Learn to interact with the Solana network by sending
-  transactions.
-- Building and Deploying Programs: Create your first Solana program and deploy
-  it to the network.
-- Program Derived Addresses (PDAs): Learn how to use PDAs to create
-  deterministic addresses for accounts.
-- Cross-Program Invocations (CPIs): Learn how to make your programs interact
-  with other programs on Solana.
+- Понимание учетных записей: узнайте, как данные хранятся в сети Solana.
+- Отправка транзакций: научитесь взаимодействовать с сетью Solana, отправляя транзакции.
+- Создание и развертывание программ: создайте свою первую программу Solana и разверните ее в сети.
+- Адреса, производные от программы (PDA). Узнайте, как использовать PDA для создания
+  детерминированные адреса для учетных записей.
+- Межпрограммные вызовы (CPI): узнайте, как заставить ваши программы взаимодействовать с другими программами на Solana.
 
-The best part? You don't need to install anything! We'll be using Solana
-Playground, a browser-based development environment, for all our examples. This
-means you can follow along, copy and paste code, and see results immediately,
-all from your web browser. Basic programming knowledge is helpful but not
-required.
+Лучшая часть? Вам не нужно ничего устанавливать! Мы будем использовать 
+Solana Playground — браузерная среда разработки для всех наших примеров. 
+Это означает, что вы можете следовать инструкциям, копировать и вставлять код 
+и немедленно видеть результаты, и все это в вашем веб-браузере. 
+Базовые знания программирования полезны, но не обязательны.
 
-Let's dive in and start building on Solana!
+Давайте погрузимся и начнем строить Солану!
 
 ## Solana Playground
 
-Solana Playground (Solpg) is a browser-based development environment that allows
-you to quickly develop, deploy, and test Solana programs!
+Solana Playground (Solpg) — это браузерная среда разработки, 
+позволяющая быстро разрабатывать, развертывать и тестировать программы Solana!
 
-Open a new tab in your web browser and navigate to https://beta.solpg.io/.
+Откройте новую вкладку в веб-браузере и перейдите по адресу https://beta.solpg.io/.
 
 <Steps>
 
-### Create Playground Wallet
+### Создать кошелек Solana Playground
 
-If you're new to Solana Playground, the first step is to create your Playground
-Wallet. This wallet will allow you to interact with the Solana network right
-from your browser.
+Если вы новичок в Solana Playground, первым шагом будет создание кошелька 
+Playground. Этот кошелек позволит вам взаимодействовать с сетью Solana 
+прямо из браузера.
 
-#### Step 1. Connect to Playground
+#### Шаг 1. Подключитесь к игровой площадке
 
-Click the "Not connected" button at the bottom left of the screen.
+Нажмите кнопку «Не подключено» в левом нижнем углу экрана.
 
 ![Not Connected](/assets/docs/intro/quickstart/pg-not-connected.png)
 
-#### Step 2. Create Your Wallet
+#### Шаг 2. Создайте свой кошелек
 
-You'll see an option to save your wallet's keypair. Optionally, save your
-wallet's keypair for backup and then click "Continue".
+Вы увидите возможность сохранить пару ключей вашего кошелька. 
+При желании сохраните пару ключей вашего кошелька для 
+резервного копирования и нажмите «Продолжить».
 
 ![Create Playground Wallet](/assets/docs/intro/quickstart/pg-create-wallet.png)
 
-You should now see your wallet's address, SOL balance, and connected cluster
-(devnet by default) at the bottom of the window.
+Теперь вы должны увидеть адрес вашего кошелька, баланс SOL и 
+подключенный кластер (по умолчанию devnet) в нижней части окна.
 
 ![Connected](/assets/docs/intro/quickstart/pg-connected.png)
 
 <Callout>
-  Your Playground Wallet will be saved in your browser's local storage. Clearing
-  your browser cache will remove your saved wallet.
+  Ваш кошелек Playground будет сохранен в локальном хранилище вашего браузера. 
+  Очистка кеша браузера приведет к удалению сохраненного кошелька.
 </Callout>
 
-### Get Devnet SOL
+### Получить доступ к Devnet SOL
 
-Before we start building, we first need some devnet SOL.
+Прежде чем мы начнем сборку, нам сначала понадобится немного devnet SOL.
 
-From a developer's perspective, SOL is required for two main use cases:
+С точки зрения разработчика, SOL необходим для двух основных случаев использования:
 
-- To create accounts where we can store data or deploy programs
-- To pay for transaction fees when we interact with the network
+- Для создания учетных записей, где мы можем хранить данные или развертывать программы.
+- Для оплаты комиссий за транзакции при взаимодействии с сетью
 
-Below are two methods to fund your wallet with devnet SOL:
+Ниже приведены два способа пополнить свой кошелек с помощью devnet SOL:
 
-#### Option 1: Using the Playground Terminal
+#### Вариант 1. Использование терминала игровой площадки
 
-To fund your Playground wallet with devnet SOL. In the Playground terminal, run:
+Чтобы пополнить свой кошелек Playground с помощью devnet SOL. В терминале Playground запустите:
 
 ```shell filename="Terminal"
 solana airdrop 5
 ```
 
-#### Option 2: Using the Devnet Faucet
+#### Вариант 2. Использование крана Devnet
 
-If the airdrop command doesn't work (due to rate limits or errors), you can use
-the [Web Faucet](https://faucet.solana.com/).
+Если команда airdrop не работает (из-за ограничений скорости или ошибок), 
+вы можете использовать [Веб-сборщик (Web Faucet)](https://faucet.solana.com/).
 
-- Enter your wallet address (found at the bottom of the Playground screen) and
-  select an amount
-- Click "Confirm Airdrop" to receive your devnet SOL
-
+- Введите адрес своего кошелька (находится внизу экрана игровой площадки) и выберите сумму.
+- Нажмите «Подтвердить раздачу», чтобы получить SOL devnet.
 ![Faucet Airdrop](/assets/docs/intro/quickstart/faucet-airdrop.gif)
 
 </Steps>
 
-## Reading from network
+## Чтение из сети
 
-Now, let's explore how to read data from the Solana network. We'll fetch a few
-different accounts to understand the structure of a Solana account.
+Теперь давайте рассмотрим, как читать данные из сети Solana. Мы возьмем 
+несколько разных учетных записей, чтобы понять структуру учетной записи Solana.
 
-On Solana, all data is contained in what we call "accounts". You can think of
-data on Solana as a public database with a single "Accounts" table, where each
-entry in this table is an individual account.
+В Solana все данные содержатся в так называемых «учетных записях». 
+Вы можете думать о данных Solana как об общедоступной базе данных 
+с одной таблицей «Счета», где каждая запись в этой таблице представляет собой 
+отдельную учетную запись.
 
-Accounts on Solana can store "state" or "executable" programs, all of which can
-be thought of as entries in the same "Accounts" table. Each account has an
-"address" (public key) that serves as its unique ID used to locate its
-corresponding on-chain data.
+Учетные записи на Solana могут хранить «состоятельные» или «исполняемые» программы, 
+все из которых можно рассматривать как записи в одной и той же таблице «Учетные записи». 
+Каждая учетная запись имеет «адрес» (открытый ключ), который служит ее 
+уникальным идентификатором, используемым для поиска соответствующих данных в цепочке.
 
-Solana accounts contain either:
+Учетные записи Solana содержат:
 
-- State: This is data that's meant to be read from and persisted. It could be
-  information about tokens, user data, or any other type of data defined within
-  a program.
-- Executable Programs: These are accounts that contain the actual code of Solana
-  programs. They contain the instructions that can be executed on the network.
+- Состояние: это данные, которые предназначены для чтения и сохранения. Это может быть 
+  информация о токенах, пользовательских данных или любой другой тип данных, 
+  определенный в программе.
+- Исполняемые программы: это учетные записи, содержащие реальный код программ Solana. 
+  Они содержат инструкции, которые могут выполняться в сети.
 
-This separation of program code and program state is a key feature of Solana's
-Account Model. For more details, refer to the
-[Solana Account Model](/docs/core/accounts) page.
+Такое разделение программного кода и состояния программы является ключевой особенностью 
+модели учетной записи Solana. Для получения более подробной информации см.
+Страница [Модель учетной записи Solana](/docs/core/accounts).
 
 <Steps>
 
-### Fetch Playground Wallet
+### Принести кошелек для игровой площадки
 
-Let's start by looking at a familiar account - your own Playground Wallet! We'll
-fetch this account and examine its structure to understand what a basic Solana
-account looks like.
+Начнем с рассмотрения знакомого аккаунта — вашего собственного кошелька Playground! 
+Мы получим эту учетную запись и исследуем ее структуру, чтобы понять, 
+как выглядит базовая учетная запись Solana.
 
-#### Step 1: Open the Example
+#### Шаг 1. Откройте пример
 
-Click this [link](https://beta.solpg.io/6671c5e5cffcf4b13384d198) to open the
-example in Solana Playground. You'll see this code:
+Нажмите эту [ссылку](https://beta.solpg.io/6671c5e5cffcf4b13384d198), 
+чтобы открыть пример в Solana Playground. Вы увидите этот код:
 
 ```ts filename="client.ts"
 const address = pg.wallet.publicKey;
@@ -152,19 +150,19 @@ console.log(JSON.stringify(accountInfo, null, 2));
 
 This code does three simple things:
 
-- Gets your Playground wallet's address
+- Получает адрес вашего кошелька Playground.
 
   ```ts
   const address = pg.wallet.publicKey;
   ```
 
-- Fetches the `AccountInfo` for the account at that address
+- Получает `AccountInfo` для учетной записи по этому адресу.
 
   ```ts
   const accountInfo = await pg.connection.getAccountInfo(address);
   ```
 
-- Prints out the `AccountInfo` to the Playground terminal
+- Распечатывает `AccountInfo` на терминал Playground.
 
   ```ts
   console.log(JSON.stringify(accountInfo, null, 2));
@@ -172,16 +170,16 @@ This code does three simple things:
 
 </details>
 
-#### Step 2: Run the Code
+#### Шаг 2. Запустите код
 
-In the Playground terminal, type the `run` command and hit enter:
+В терминале Playground введите команду «run» и нажмите Enter:
 
 ```shell filename="Terminal"
 run
 ```
 
-You should see details about your wallet account, including its balance in
-lamports, with output similar to the following:
+Вы должны увидеть подробную информацию о своем счете кошелька, 
+включая его баланс в лампортах, с выводом, аналогичным следующему:
 
 <details>
 {<summary>Output</summary>}
@@ -208,45 +206,42 @@ Running client...
 <details>
 {<summary>Explanation</summary>}
 
-Your wallet is actually just an account owned by the System Program, where the
-main purpose of the wallet account is to store your SOL balance (amount in the
-`lamports` field).
+Ваш кошелек на самом деле представляет собой просто учетную запись, 
+принадлежащую Системной программе, где основной целью учетной записи 
+кошелька является хранение вашего баланса SOL (сумма в поле «lamports»).
 
 ---
 
-At its core, all Solana accounts are represented in a standard format called the
-`AccountInfo`. The
-[AccountInfo](https://github.com/solana-labs/solana/blob/27eff8408b7223bb3c4ab70523f8a8dca3ca6645/sdk/program/src/account_info.rs#L19-L36)
-data type is the base data structure for all Solana Accounts.
+По своей сути все учетные записи Solana представлены в стандартном формате, 
+называемом AccountInfo. Тип данных 
+[AccountInfo](https://github.com/solana-labs/solana/blob/27eff8408b7223bb3c4ab70523f8a8dca3ca6645/sdk/program/src/account_info.rs#L19-L36) 
+является базовой структурой данных для всех учетных записей Solana.
 
-Let's break down the fields in the output:
+Давайте разберем поля в выводе:
 
-- `data` - This field contains what we generally refer to as the account "data".
-  For a wallet, it's empty (0 bytes), but other accounts use this field to store
-  any arbitrary data as a serialized buffer of bytes.
-- `executable` - A flag that indicates whether the account is an executable
-  program. For wallets and any accounts that store state, this is `false`.
-- `owner` - This field shows which program controls the account. For wallets,
-  it's always the System Program, with the address
-  `11111111111111111111111111111111`.
-- `lamports` - The account's balance in lamports (1 SOL = 1,000,000,000
-  lamports).
-- `rentEpoch` - A legacy field related to Solana's deprecated rent collection
-  mechanism (currently not in use).
-- `space` - Indicates byte capacity (length) of the `data` field, but is not a
-  field in the `AccountInfo` type
+- `данные`. Это поле содержит то, что мы обычно называем «данными» учетной записи. 
+   Для кошелька оно пустое (0 байт), но другие учетные записи используют это поле 
+   для хранения любых произвольных данных в виде сериализованного буфера байтов.
+- `исполняемый` — флаг, указывающий, является ли учетная запись исполняемой программой. 
+   Для кошельков и любых учетных записей, хранящих состояние, это «ложь».
+- `владелец` - В этом поле показано, какая программа управляет учетной записью. 
+   Для кошельков это всегда Системная программа с адресом `111111111111111111111111111111111`.
+- `лампорты` - Баланс счета в лампортах (1 SOL = 1 000 000 000 лампортов).
+- `rentEpoch` — устаревшее поле, связанное с устаревшим механизмом сбора арендной платы Solana 
+   (в настоящее время не используется).
+- `space` – указывает емкость (длину) поля `data` в байтах, но не является полем типа `AccountInfo`.
 
 </details>
 
-### Fetch Token Program
+### Программа получения токенов
 
-Next, we'll examine the Token Extensions program, an executable program for
-interacting with tokens on Solana.
+Далее мы рассмотрим программу Token Extensions — исполняемую программу 
+для взаимодействия с токенами на Solana.
 
-#### Step 1: Open the Example
+#### Шаг 1: Откройте пример
 
-Click this [link](https://beta.solpg.io/6671c6e7cffcf4b13384d199) to open the
-example in Solana Playground. You'll see this code:
+Щелкните эту [ссылку](https://beta.solpg.io/6671c6e7cffcf4b13384d199), 
+чтобы открыть пример в Solana Playground. Вы увидите этот код:
 
 ```ts filename="client.ts" {3}
 import { PublicKey } from "@solana/web3.js";
@@ -257,19 +252,19 @@ const accountInfo = await pg.connection.getAccountInfo(address);
 console.log(JSON.stringify(accountInfo, null, 2));
 ```
 
-Instead of fetching your Playground wallet, here we fetch the address of the
-Token Extensions Program account.
+Вместо получения вашего кошелька Playground мы получаем адрес учетной записи 
+программы расширения токенов.
 
-#### Step 2: Run the Code
+#### Шаг 2. Запустите код
 
-Run the code using the `run` command in the terminal.
+Запустите код с помощью команды «run» в терминале.
 
 ```shell filename="Terminal"
 run
 ```
 
-Examine the output and how this program account differs from your wallet
-account.
+Изучите выходные данные и то, чем эта учетная запись программы 
+отличается от учетной записи вашего кошелька.
 
 <details>
 {<summary>Output</summary>}
@@ -302,42 +297,41 @@ Running client...
 <details>
 {<summary>Explanation</summary>}
 
-The Token Extensions program is an executable program account, but note that it
-has the same `AccountInfo` structure.
+Программа Token Extensions представляет собой исполняемую учетную запись 
+программы, но учтите, что она имеет ту же структуру AccountInfo.
 
-Key differences in the `AccountInfo`:
+Ключевые отличия в AccountInfo:
 
-- `executable` - Set to `true`, indicating this account represents an executable
-  program.
-- `data` - Contains serialized data (unlike the empty data in a wallet account).
-  The data for a program account stores the address of another account (Program
-  Executable Data Account) that contains the program's bytecode.
-- `owner` - The account is owned by the Upgradable BPF Loader
-  (`BPFLoaderUpgradeab1e11111111111111111111111`), a special program that
-  manages executable accounts.
+- `executable` — установлено значение `true`, указывающее, 
+   что эта учетная запись представляет собой исполняемую программу.
+- `data` - Содержит сериализованные данные (в отличие от пустых данных 
+   в учетной записи кошелька). В данных учетной записи программы хранится адрес 
+   другой учетной записи (учетной записи исполняемых данных программы), 
+   которая содержит байт-код программы.
+- `owner` — учетная запись принадлежит обновляемому загрузчику BPF 
+  (`BPFLoaderUpgradeab1e11111111111111111111111`), специальной программе, 
+  которая управляет исполняемыми учетными записями.---
 
----
+Вы можете проверить Solana Explorer для 
+[учетной записи программы расширений токенов] (https://explorer.solana.com/address/TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb)
+и соответствующую ему 
+[Учетную запись исполняемых данных программы] (https://explorer.solana.com/address/DoU57AYuPFu2QU514RktNPG22QhApEjnKxnBcu4BHDTY).
 
-You can inspect the Solana Explorer for the
-[Token Extensions Program Account](https://explorer.solana.com/address/TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb)
-and its corresponding
-[Program Executable Data Account](https://explorer.solana.com/address/DoU57AYuPFu2QU514RktNPG22QhApEjnKxnBcu4BHDTY).
-
-The Program Executable Data Account contains the compiled bytecode for the Token
-Extensions Program
+Учетная запись исполняемых данных программы содержит скомпилированный 
+байт-код для программы расширений токенов.
 [source code](https://github.com/solana-labs/solana-program-library/tree/b1c44c171bc95e6ee74af12365cb9cbab68be76c/token/program-2022/src).
 
 </details>
 
-### Fetch Mint Account
+### Получить учетную запись Mint
 
-In this step, we'll examine a Mint account, which represents a unique token on
-the Solana network.
+На этом этапе мы рассмотрим учетную запись Mint, которая представляет собой 
+уникальный токен в сети Solana.
 
-#### Step 1: Open the Example
+#### Шаг 1. Откройте пример
 
-Click this [link](https://beta.solpg.io/6671c9aecffcf4b13384d19a) to open the
-example in Solana Playground. You'll see this code:
+Щелкните эту [ссылку](https://beta.solpg.io/6671c9aecffcf4b13384d19a), 
+чтобы открыть пример в Solana Playground. Вы увидите этот код:
 
 ```ts filename="client.ts" {3}
 import { PublicKey } from "@solana/web3.js";
@@ -348,11 +342,11 @@ const accountInfo = await pg.connection.getAccountInfo(address);
 console.log(JSON.stringify(accountInfo, null, 2));
 ```
 
-In this example, we'll fetch the address of an existing Mint account on devnet.
+В этом примере мы получим адрес существующей учетной записи Mint в devnet.
 
-#### Step 2: Run the Code
+#### Шаг 2. Запустите код
 
-Run the code using the `run` command.
+Запустите код с помощью команды «Выполнить».
 
 ```shell filename="Terminal"
 run
@@ -389,25 +383,26 @@ Running client...
 <details>
 {<summary>Explanation</summary>}
 
-Key differences in the `AccountInfo`:
+Ключевые отличия в AccountInfo:
 
-- `owner` - The mint account is owned by the Token Extensions program
-  (`TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb`).
-- `executable` - Set to `false`, as this account stores state rather than
-  executable code.
-- `data`: Contains serialized data about the token (mint authority, supply,
-  decimals, etc.).
+- `owner` — учетная запись монетного двора принадлежит программе 
+  Token Extensions (`TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb`).
+- `executable` — установите значение `false`, так как эта учетная запись 
+  хранит состояние, а не исполняемый код.
+- `data`: Содержит сериализованные данные о токене 
+  (правитель монетного двора, поставка, десятичные числа и т. д.).
 
 </details>
 
-#### Step 3: Deserialize Mint Account Data
+#### Шаг 3. Десериализация данных учетной записи Mint
 
-To read the `data` field from any account, you need to deserialize the data
-buffer into the expected data type. This is often done using helper functions
-from client libraries for a particular program.
+Чтобы прочитать поле data из любой учетной записи, вам необходимо 
+десериализовать буфер данных в ожидаемый тип данных. 
+Часто это делается с помощью вспомогательных функций 
+из клиентских библиотек для конкретной программы.
 
-Open this next [example](https://beta.solpg.io/6671cd8acffcf4b13384d19b) in
-Solana Playground. You'll see this code:
+Откройте следующий [пример](https://beta.solpg.io/6671cd8acffcf4b13384d19b) 
+на игровой площадке Solana. Вы увидите этот код:
 
 ```ts filename="client.ts"
 import { PublicKey } from "@solana/web3.js";
@@ -424,16 +419,16 @@ const mintData = await getMint(
 console.log(mintData);
 ```
 
-This example uses the `getMint` helper function to automatically deserialize the
-data field of the Mint account.
+В этом примере используется вспомогательная функция getMint 
+для автоматической десериализации поля данных учетной записи Mint.
 
-Run the code using the `run` command.
+Запустите код с помощью команды «Выполнить».
 
 ```shell filename="Terminal"
 run
 ```
 
-You should see the following deserialized Mint account data.
+Вы должны увидеть следующие десериализованные данные учетной записи Mint.
 
 <details>
 {<summary>Output</summary>}
@@ -455,48 +450,48 @@ Running client...
 <details>
 {<summary>Explanation</summary>}
 
-The `getMint` function deserializes the account data into the
-[Mint](https://github.com/solana-labs/solana-program-library/blob/b1c44c171bc95e6ee74af12365cb9cbab68be76c/token/program/src/state.rs#L18-L32)
-data type defined in the Token Extensions program source code.
+Функция getMint десериализует данные учетной записи в 
+[Mint](https://github.com/solana-labs/solana-program-library/blob/b1c44c171bc95e6ee74af12365cb9cbab68be76c/token/program/src/state.rs#L18-L32 ) 
+тип данных, определенный в исходном коде программы Token Extensions.
 
-- `address` - The Mint account's address
-- `mintAuthority` - The authority allowed to mint new tokens
-- `supply` - The total supply of tokens
-- `decimals` - The number of decimal places for the token
-- `isInitialized` - Whether the Mint data has been initialized
-- `freezeAuthority` - The authority allowed to freeze token accounts
-- `tlvData` - Additional data for Token Extensions (requires further
-  deserialization)
+- `address` - адрес учетной записи Mint
+- `mintAuthority` — полномочия, разрешающие чеканить новые токены.
+- `supply` - Общий запас токенов
+- `decimals` — количество десятичных знаков для токена.
+- `isInitialized` — были ли инициализированы данные Mint
+- `freezeAuthority` — орган, разрешивший замораживать токены-аккаунты.
+- `tlvData` — дополнительные данные для расширений токенов (требуется дополнительная информация).
+ десериализация)
 
-You can view the fully deserialized
-[Mint Account](https://explorer.solana.com/address/C33qt1dZGZSsqTrHdtLKXPZNoxs6U1ZBfyDkzmj6mXeR?cluster=devnet)
-data, including enabled Token Extensions, on the Solana Explorer.
+Вы можете просмотреть полностью десериализованные данные 
+[Mint Account](https://explorer.solana.com/address/C33qt1dZGZSsqTrHdtLKXPZNoxs6U1ZBfyDkzmj6mXeR?cluster=devnet), 
+включая включенные расширения токенов, в Solana Explorer.
 
 </details>
 
 </Steps>
 
-## Writing to network
+## Запись в сеть
 
-Now that we've explored reading from the Solana network, let's learn how to
-write data to it. On Solana, we interact with the network by sending
-transactions made up of instructions. These instructions are defined by
-programs, which contain the business logic for how accounts should be updated.
+Теперь, когда мы изучили чтение из сети Solana, давайте научимся записывать в нее данные. 
+В Solana мы взаимодействуем с сетью, отправляя транзакции, состоящие из инструкций. 
+Эти инструкции определяются программами, которые содержат бизнес-логику того, 
+как следует обновлять учетные записи.
 
-Let's walk through two common operations, transferring SOL and creating a token,
-to demonstrate how to build and send transactions. For more details, refer to
-the [Transactions and Instructions](/docs/core/transactions) and
-[Fees on Solana](/docs/core/fees) pages.
+Давайте рассмотрим две распространенные операции: передачу SOL и создание токена, 
+чтобы продемонстрировать, как создавать и отправлять транзакции. 
+Более подробную информацию можно найти на страницах 
+[Транзакции и инструкции](/docs/core/transactions) и [Комиссии на Solana](/docs/core/fees).
 
 <Steps>
 
-### Transfer SOL
+### Трансфер СОЛ
 
-We'll start with a simple SOL transfer from your wallet to another account. This
-requires invoking the transfer instruction on the System Program.
+Мы начнем с простого перевода SOL с вашего кошелька на другой аккаунт. 
+Для этого необходимо вызвать команду передачи в системной программе.
 
-Click this [link](https://beta.solpg.io/6671d85ecffcf4b13384d19e) to open the
-example in Solana Playground. You'll see this code:
+Щелкните эту [ссылку](https://beta.solpg.io/6671d85ecffcf4b13384d19e), 
+чтобы открыть пример в Solana Playground. Вы увидите этот код:
 
 ```ts filename="client.ts"
 import {
@@ -533,21 +528,21 @@ console.log(
 <details>
 {<summary>Explanation</summary>}
 
-This script does the following:
+Этот скрипт делает следующее:
 
-- Set your Playground wallet as the sender
+- Установите свой кошелек Playground в качестве отправителя.
 
   ```ts
   const sender = pg.wallet.keypair;
   ```
 
-- Creates a new keypair as the receiver
+- Создает новую пару ключей в качестве получателя
 
   ```ts
   const receiver = new Keypair();
   ```
 
-- Constructs a transfer instruction to transfer 0.01 SOL
+- Создает инструкцию передачи для передачи 0,01 SOL.
 
   ```ts
   const transferInstruction = SystemProgram.transfer({
@@ -557,13 +552,13 @@ This script does the following:
   });
   ```
 
-- Builds a transaction including the transfer instruction
+- Создает транзакцию, включая инструкцию по переводу
 
   ```ts
   const transaction = new Transaction().add(transferInstruction);
   ```
 
-- Sends and confirms the transaction
+- Отправляет и подтверждает транзакцию
 
   ```ts
   const transactionSignature = await sendAndConfirmTransaction(
@@ -573,8 +568,8 @@ This script does the following:
   );
   ```
 
-- Prints out a link to the SolanaFM explorer in the Playground terminal to view
-  the transaction details
+- Распечатывает ссылку на SolanaFM explorer в терминале Playground 
+  для просмотра деталей транзакции.
 
   ```ts
   console.log(
@@ -585,14 +580,13 @@ This script does the following:
 
 </details>
 
-Run the code using the `run` command.
+Запустите код с помощью команды «run».
 
 ```shell filename="Terminal"
 run
 ```
 
-Click on the output link to view the transaction details on the SolanaFM
-explorer.
+Нажмите на ссылку вывода, чтобы просмотреть детали транзакции в проводнике SolanaFM.
 
 <details>
 {<summary>Output</summary>}
@@ -607,20 +601,21 @@ Running client...
 
 ![Transfer SOL](/assets/docs/intro/quickstart/transfer-sol.png)
 
-You've just sent your first transaction on Solana! Notice how we created an
-instruction, added it to a transaction, and then sent that transaction to the
-network. This is the basic process for building any transaction.
+Вы только что отправили свою первую транзакцию на Solana! 
+Обратите внимание, как мы создали инструкцию, добавили ее в транзакцию, 
+а затем отправили эту транзакцию в сеть. Это основной процесс 
+построения любой транзакции.
 
-### Create a Token
+### Создать токен
 
-Now, let's create a new token by creating and initializing a Mint account. This
-requires two instructions:
+Теперь давайте создадим новый токен, создав и инициализировав 
+учетную запись Mint. Для этого необходимы две инструкции:
 
-- Invoke the System Program to create a new account
-- Invoke the Token Extensions Program
+- Вызовите системную программу, чтобы создать новую учетную запись.
+- Вызов программы расширений токенов
 
-Click this [link](https://beta.solpg.io/6671da4dcffcf4b13384d19f) to open the
-example in Solana Playground. You'll see the following code:
+Щелкните эту [ссылку](https://beta.solpg.io/6671da4dcffcf4b13384d19f), 
+чтобы открыть пример в Solana Playground. Вы увидите следующий код:
 
 ```ts filename="client.ts"
 import {
@@ -694,30 +689,31 @@ console.log(
 <details>
 {<summary>Explanation</summary>}
 
-This script performs the following steps:
+Этот скрипт выполняет следующие шаги:
 
-- Sets up your Playground wallet and a connection to the Solana devnet
+- Настраивает кошелек Playground и подключение к сети разработчиков Solana.
 
   ```ts
   const wallet = pg.wallet;
   const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
   ```
 
-- Generates a new keypair for the mint account
+- Генерирует новую пару ключей для учетной записи mint.
 
   ```ts
   const mint = new Keypair();
   ```
 
-- Calculates the minimum lamports needed for a Mint account
+- Рассчитывает минимальное количество лампортов, необходимое 
+  для учетной записи Mint.
 
   ```ts
   const rentLamports = await getMinimumBalanceForRentExemptMint(connection);
   ```
 
-- Creates an instruction to create a new account for the mint, specifying the
-  Token Extensions program (`TOKEN_2022_PROGRAM_ID`) as the owner of the new
-  account
+- Создает инструкцию по созданию новой учетной записи для монетного двора, 
+  указывая программу Token Extensions (`TOKEN_2022_PROGRAM_ID`) 
+  в качестве владельца новой учетной записи.
 
   ```ts
   const createAccountInstruction = SystemProgram.createAccount({
@@ -729,7 +725,7 @@ This script performs the following steps:
   });
   ```
 
-- Creates an instruction to initialize the mint account data
+- Создает инструкцию для инициализации данных учетной записи монетного двора.
 
   ```ts
   const initializeMintInstruction = createInitializeMint2Instruction(
@@ -741,7 +737,7 @@ This script performs the following steps:
   );
   ```
 
-- Adds both instructions to a single transaction
+- Добавляет обе инструкции в одну транзакцию
 
   ```ts
   const transaction = new Transaction().add(
@@ -750,10 +746,11 @@ This script performs the following steps:
   );
   ```
 
-- Sends and confirms the transaction. Both the wallet and mint keypair are
-  passed in as signers on the transaction. The wallet is required to pay for the
-  creation of the new account. The mint keypair is required because we are using
-  its publickey as the address of the new account.
+- Отправляет и подтверждает транзакцию. И кошелек, и пара ключей mint 
+  передаются в качестве подписывающих сторон транзакции. 
+  Кошелек необходим для оплаты создания новой учетной записи. 
+  Требуется пара ключей mint, поскольку мы используем ее открытый ключ 
+  в качестве адреса новой учетной записи.
 
   ```ts
   const transactionSignature = await sendAndConfirmTransaction(
@@ -763,7 +760,7 @@ This script performs the following steps:
   );
   ```
 
-- Prints out links to view the transaction and mint account details on SolanaFM
+- Распечатывает ссылки для просмотра сведений о транзакции и счете на SolanaFM.
 
   ```ts
   console.log(
@@ -779,19 +776,19 @@ This script performs the following steps:
 
 </details>
 
-Run the code using the `run` command.
+Запустите код с помощью команды `run`.
 
 ```shell filename="Terminal"
 run
 ```
 
-You'll see two links printed to the Playground terminal:
+Вы увидите две ссылки, напечатанные на терминале Playground:
 
-- One for the transaction details
-- One for the newly created mint account
+- Один для деталей транзакции
+- Один для вновь созданной учетной записи монетного двора
 
-Click the links to inspect the transaction details and the newly created mint
-account on SolanaFM.
+Нажмите на ссылку, чтобы просмотреть детали транзакции и вновь 
+созданную учетную запись монетного двора на SolanaFM.
 
 <details>
 {<summary>Output</summary>}
@@ -800,7 +797,7 @@ account on SolanaFM.
 Running client...
   client.ts:
 
-Transaction Signature: https://solana.fm/tx/3BEjFxqyGwHXWSrEBnc7vTSaXUGDJFY1Zr6L9iwLrjH8KBZdJSucoMrFUEJgWrWVRYzrFvbjX8TmxKUV88oKr86g?cluster=devnet-solana
+Подпись транзакции: https://solana.fm/tx/3BEjFxqyGwHXWSrEBnc7vTSaXUGDJFY1Zr6L9iwLrjH8KBZdJSucoMrFUEJgWrWVRYzrFvbjX8TmxKUV88oKr86g?cluster=devnet-solana
 
 Mint Account: https://solana.fm/address/CoZ3Nz488rmATDhy1hPk5fvwSZaipCngvf8rYBYVc4jN?cluster=devnet-solana
 ```
@@ -811,37 +808,37 @@ Mint Account: https://solana.fm/address/CoZ3Nz488rmATDhy1hPk5fvwSZaipCngvf8rYBYV
 
 ![Mint Account](/assets/docs/intro/quickstart/mint-account.png)
 
-Notice how we built a transaction with multiple instructions this time. We first
-created a new account and then initialized its data as a mint. This is how you
-build more complex transactions that involve instructions from multiple
-programs.
+Обратите внимание, как на этот раз мы создали транзакцию с несколькими инструкциями. 
+Сначала мы создали новую учетную запись, а затем инициализировали ее данные 
+как монетный двор. Таким образом вы строите более сложные транзакции, 
+включающие инструкции из нескольких программ.
 
 </Steps>
 
 ## Deploying Your First Solana Program
 
-In this section, we'll build, deploy, and test a simple Solana program using the
-Anchor framework. By the end, you'll have deployed your first program to the
-Solana blockchain!
+В этом разделе мы создадим, развернем и протестируем простую 
+программу Solana с использованием платформы Anchor. 
+К концу вы развернете свою первую программу в блокчейне Solana!
 
-The purpose of this section is to familiarize you with the Solana Playground.
-We'll walk through a more detailed example in the PDA and CPI sections. For more
-details, refer to the [Programs on Solana](/docs/core/programs) page.
+Цель этого раздела – познакомить вас с игровой площадкой Солана. 
+Мы рассмотрим более подробный пример в разделах PDA и CPI. 
+Более подробную информацию можно найти на странице 
+[Программы на Solana](/docs/core/programs).
 
 <Steps>
 
-### Create Anchor Project
+### Создать якорный проект
 
-First, open https://beta.solpg.io in a new browser tab.
+Сначала откройте https://beta.solpg.io в новой вкладке браузера.
 
-- Click the "Create a new project" button on the left-side panel.
+- Нажмите кнопку «Создать новый проект» на левой боковой панели.
 
-- Enter a project name, select Anchor as the framework, then click the "Create"
-  button.
+- Введите имя проекта, выберите Anchor в качестве основы, затем нажмите кнопку «Создать».
 
 ![New Project](/assets/docs/intro/quickstart/pg-new-project.gif)
 
-You'll see a new project created with the program code in the `src/lib.rs` file.
+Вы увидите новый проект, созданный с помощью программного кода в файле `src/lib.rs`.
 
 ```rust filename="lib.rs"
 use anchor_lang::prelude::*;
@@ -882,17 +879,17 @@ pub struct NewAccount {
 <details>
 {<summary>Explanation</summary>}
 
-For now, we'll only cover the high-level overview of the program code:
+На данный момент мы рассмотрим только общий обзор программного кода:
 
-- The `declare_id!` macro specifies the on-chain address of your program. It
-  will be automatically updated when we build the program in the next step.
+- Макрос `declare_id!` указывает адрес вашей программы в цепочке. 
+  Он будет автоматически обновлен, когда мы создадим программу на следующем этапе.
 
   ```rs
   declare_id!("11111111111111111111111111111111");
   ```
 
-- The `#[program]` macro annotates a module containing functions that represent
-  the program's instructions.
+- Макрос `#[program]` аннотирует модуль, содержащий функции, 
+  которые представляют инструкции программы..
 
   ```rs
   #[program]
@@ -906,23 +903,22 @@ For now, we'll only cover the high-level overview of the program code:
   }
   ```
 
-  In this example, the `initialize` instruction takes two parameters:
+  В этом примере инструкция инициализации принимает два параметра:
 
-  1. `ctx: Context<Initialize>` - Provides access to the accounts required for
-     this instruction, as specified in the `Initialize` struct.
-  2. `data: u64` - An instruction parameter that will be passed in when the
-     instruction is invoked.
+ 1. `ctx: Context<Initialize>` — обеспечивает доступ к учетным записям, 
+    необходимым для этой инструкции, как указано в структуре `Initialize`.
+ 2. `data: u64` — параметр инструкции, который будет передан при вызове инструкции.
 
-  The function body sets the `data` field of `new_account` to the provided
-  `data` argument and then prints a message to the program logs.
+ Тело функции устанавливает в поле `data` new_account` предоставленный аргумент `data`, 
+ а затем печатает сообщение в журналы программы.
 
-- The `#[derive(Accounts)]` macro is used to define a struct that specifies the
-  accounts required for a particular instruction, where each field represents a
-  separate account.
+- Макрос `#[derive(Accounts)]` используется для определения структуры, 
+  которая определяет учетные записи, необходимые для конкретной инструкции, 
+  где каждое поле представляет отдельную учетную запись.
 
-  The field types (ex. `Signer<'info>`) and constraints (ex. `#[account(mut)]`)
-  are used by Anchor to automatically handle common security checks related to
-  account validation.
+ Типы полей (например, `Signer<'info>`) и ограничения (например, `#[account(mut)]`) 
+ используются Anchor для автоматической обработки общих проверок безопасности, 
+ связанных с проверкой учетной записи.
 
   ```rs
   #[derive(Accounts)]
@@ -935,8 +931,8 @@ For now, we'll only cover the high-level overview of the program code:
   }
   ```
 
-- The `#[account]` macro is used to define a struct that represents the data
-  structure of an account created and owned by the program.
+- Макрос `#[account]` используется для определения структуры, которая представляет 
+  структуру данных учетной записи, созданной и принадлежащей программе.
 
   ```rs
   #[account]
@@ -947,16 +943,16 @@ For now, we'll only cover the high-level overview of the program code:
 
 </details>
 
-### Build and Deploy Program
+### Программа сборки и развертывания
 
-To build the program, simply run `build` in the terminal.
+Чтобы собрать программу, просто запустите `build` в терминале.
 
 ```shell filename="Terminal"
 build
 ```
 
-Notice that the address in `declare_id!()` has been updated. This is your
-program's on-chain address.
+Обратите внимание, что адрес в `declare_id!()` был обновлен. 
+Это сетевой адрес вашей программы.
 
 <details>
 {<summary>Output</summary>}
@@ -969,13 +965,14 @@ Build successful. Completed in 1.46s.
 
 </details>
 
-Once the program is built, run `deploy` in the terminal to deploy the program to
-the network (devnet by default). To deploy a program, SOL must be allocated to
-the on-chain account that stores the program.
+После сборки программы запустите «deploy» в терминале, 
+чтобы развернуть программу в сети (по умолчанию devnet). 
+Чтобы развернуть программу, SOL должен быть выделен 
+для учетной записи в цепочке, в которой хранится программа.
 
-Before deployment, ensure you have enough SOL. You can get devnet SOL by either
-running `solana airdrop 5` in the Playground terminal or using the
-[Web Faucet](https://faucet.solana.com/).
+Перед развертыванием убедитесь, что у вас достаточно SOL. 
+Вы можете получить devnet SOL, запустив «solana airdrop 5» 
+в терминале Playground или используя [веб-сборщик](https://faucet.solana.com/).
 
 ```shell filename="Terminal"
 deploy
@@ -993,28 +990,27 @@ Deployment successful. Completed in 19s.
 
 </details>
 
-Alternatively, you can also use the `Build` and `Deploy` buttons on the
-left-side panel.
+Альтернативно вы также можете использовать кнопки «Создать» и «Развернуть» на левой панели.
 
 ![Build and Deploy](/assets/docs/intro/quickstart/pg-build-deploy.png)
 
-Once the program is deployed, you can now invoke its instructions.
+После развертывания программы вы можете вызывать ее инструкции.
 
-### Test Program
+### Тестовая программа
 
-Included with the starter code is a test file found in `tests/anchor.test.ts`.
-This file demonstrates how to invoke the `initialize` instruction on the starter
-program from the client.
+В стартовый код включен тестовый файл, найденный в `tests/anchor.test.ts`. 
+Этот файл демонстрирует, как вызвать инструкцию инициализации 
+стартовой программы со стороны клиента.
 
 ```ts filename="anchor.test.ts"
 // No imports needed: web3, anchor, pg and more are globally available
 
 describe("Test", () => {
   it("initialize", async () => {
-    // Generate keypair for the new account
+    // Создайте пару ключей для новой учетной записи.
     const newAccountKp = new web3.Keypair();
 
-    // Send transaction
+    // Отправить транзакцию
     const data = new BN(42);
     const txHash = await pg.program.methods
       .initialize(data)
@@ -1027,29 +1023,29 @@ describe("Test", () => {
       .rpc();
     console.log(`Use 'solana confirm -v ${txHash}' to see the logs`);
 
-    // Confirm transaction
+    // Подтвердить транзакцию
     await pg.connection.confirmTransaction(txHash);
 
-    // Fetch the created account
+    // Получить созданную учетную запись
     const newAccount = await pg.program.account.newAccount.fetch(
       newAccountKp.publicKey,
     );
 
     console.log("On-chain data is:", newAccount.data.toString());
 
-    // Check whether the data on-chain is equal to local 'data'
+    // Проверьте, равны ли данные в цепочке локальным 'data'.
     assert(data.eq(newAccount.data));
   });
 });
 ```
 
-To run the test file once the program is deployed, run `test` in the terminal.
+Чтобы запустить тестовый файл после развертывания программы, запустите `test` в терминале.
 
 ```shell filename="Terminal"
 test
 ```
 
-You should see an output indicating that the test passed successfully.
+Вы должны увидеть выходные данные, указывающие, что тест пройден успешно.
 
 <details>
 {<summary>Output</summary>}
@@ -1067,18 +1063,19 @@ Running tests...
 
 </details>
 
-You can also use the `Test` button on the left-side panel.
+Вы также можете использовать кнопку `Test` на левой боковой панели.
 
 ![Run Test](/assets/docs/intro/quickstart/pg-test.png)
 
-You can then view the transaction logs by running the `solana confirm -v`
-command and specifying the transaction hash (signature) from the test output:
+
+Затем вы можете просмотреть журналы транзакций, выполнив команду `solana confirm -v` 
+и указав хэш транзакции (подпись) из результатов теста:
 
 ```shell filename="Terminal"
 solana confirm -v [TxHash]
 ```
 
-For example:
+Например:
 
 ```shell filename="Terminal"
 solana confirm -v 3TewJtiUz1EgtT88pLJHvKFzqrzDNuHVi8CfD2mWmHEBAaMfC5NAaHdmr19qQYfTiBace6XUmADvR4Qrhe8gH5uc
@@ -1129,29 +1126,30 @@ Confirmed
 
 </details>
 
-Alternatively, you can view the transaction details on
-[SolanaFM](https://solana.fm/) or
-[Solana Explorer](https://explorer.solana.com/?cluster=devnet) by searching for
-the transaction signature (hash).
+Кроме того, вы можете просмотреть детали транзакции на
+[SolanaFM](https://solana.fm/) или
+[Solana Explorer](https://explorer.solana.com/?cluster=devnet) 
+путем поиска подписи транзакции (хеша).
 
 <Callout>
-  Reminder to update the cluster (network) connection on the Explorer you are
-  using to match Solana Playground. Solana Playground's default cluster is devnet.
+  Напоминание о необходимости обновить кластерное (сетевое) соединение 
+  в используемом вами проводнике для соответствия Solana Playground. 
+  Кластером Solana Playground по умолчанию является devnet.
 </Callout>
 
-### Close Program
+### Закрыть программу
 
-Lastly, the SOL allocated to the on-chain program can be fully recovered by
-closing the program.
+Наконец, SOL, выделенный для программы в цепочке, 
+можно полностью восстановить, закрыв программу.
 
-You can close a program by running the following command and specifying the
-program address found in `declare_id!()`:
+Вы можете закрыть программу, выполнив следующую команду 
+и указав адрес программы, найденный в `declare_id!()`:
 
 ```shell filename="Terminal"
 solana program close [ProgramID]
 ```
 
-For example:
+Например:
 
 ```shell filename="Terminal"
 solana program close 2VvQ11q8xrn5tkPNyeraRsPaATdiPx8weLAD8aD4dn2r
@@ -1170,49 +1168,51 @@ Closed Program Id 2VvQ11q8xrn5tkPNyeraRsPaATdiPx8weLAD8aD4dn2r, 2.79511512 SOL r
 <details>
 {<summary>Explanation</summary>}
 
-Only the upgrade authority of the program can close it. The upgrade authority is
-set when the program is deployed, and it's the only account with permission to
-modify or close the program. If the upgrade authority is revoked, then the
-program becomes immutable and can never be closed or upgraded.
+Только авторизация обновления программы может закрыть ее. 
+Права на обновление задаются при развертывании программы, 
+и это единственная учетная запись, имеющая разрешение 
+на изменение или закрытие программы. Если право на обновление отозвано, 
+программа становится неизменяемой и ее невозможно закрыть или обновить.
 
-When deploying programs on Solana Playground, your Playground wallet is the
-upgrade authority for all your programs.
+При развертывании программ на Solana Playground ваш кошелек 
+Playground является органом обновления для всех ваших программ.
 
 </details>
 
-Congratulations! You've just built and deployed your first Solana program using
-the Anchor framework!
+Поздравляем! Вы только что создали и развернули 
+свою первую программу Solana с использованием 
+платформы Anchor!
 
 </Steps>
 
-## Program Derived Address
+## Производный адрес программы
 
-In this section, we'll walk through how to build a basic CRUD (Create, Read,
-Update, Delete) program. The program will store a user's message using a Program
-Derived Address (PDA) as the account's address.
+В этом разделе мы рассмотрим, как создать базовую программу CRUD 
+(создание, чтение, обновление, удаление). Программа сохранит 
+сообщение пользователя, используя в качестве адреса учетной записи адрес, 
+полученный программой (PDA).
 
-The purpose of this section is to guide you through the steps for building and
-testing a Solana program using the Anchor framework and demonstrating how to use
-PDAs within a program. For more details, refer to the
-[Programs Derived Address](/docs/core/pda) page.
+Цель этого раздела — провести вас через этапы создания и тестирования 
+программы Solana с использованием платформы Anchor и продемонстрировать, 
+как использовать КПК в программе. Более подробную информацию 
+можно найти на странице [Производный адрес программ](/docs/core/pda).
 
-For reference, here is the
-[final code](https://beta.solpg.io/668304cfcffcf4b13384d20a) after completing
-both the PDA and CPI sections.
+Для справки, вот [окончательный код](https://beta.solpg.io/668304cfcffcf4b13384d20a) 
+после заполнения разделов PDA и CPI.
 
 <Steps>
 
-### Starter Code
+### Стартовый код
 
-Begin by opening this
-[Solana Playground link](https://beta.solpg.io/66734b7bcffcf4b13384d1ad) with
-the starter code. Then click the "Import" button, which will add the program to
-your list of projects on Solana Playground.
+Начните с открытия этой 
+[ссылки на игровую площадку Solana] (https://beta.solpg.io/66734b7bcffcf4b13384d1ad) 
+со стартовым кодом. Затем нажмите кнопку «Импортировать», 
+после чего программа будет добавлена ​​в список проектов на Solana Playground.
 
 ![Import](/assets/docs/intro/quickstart/pg-import.png)
 
-In the `lib.rs` file, you'll find a program scaffolded with the `create`,
-`update`, and `delete` instructions we'll implement in the following steps.
+В файле `lib.rs` вы найдете программу, оснащенную инструкциями 
+`create`, `update` и `delete`, которые мы реализуем на следующих шагах.
 
 ```rs filename="lib.rs"
 use anchor_lang::prelude::*;
@@ -1249,8 +1249,8 @@ pub struct Delete {}
 pub struct MessageAccount {}
 ```
 
-Before we begin, run `build` in the Playground terminal to check the starter
-program builds successfully.
+Прежде чем мы начнем, запустите `build` в терминале Playground, 
+чтобы проверить успешность сборки стартовой программы.
 
 ```shell filename="Terminal"
 build
@@ -1267,12 +1267,13 @@ Build successful. Completed in 3.50s.
 
 </details>
 
-### Define Message Account Type
+### Определить тип учетной записи сообщения
 
-First, let's define the structure for the message account that our program will
-create. This is the data that we'll store in the account created by the program.
+Сначала давайте определим структуру учетной записи сообщения, 
+которую создаст наша программа. Это данные, 
+которые мы будем хранить в учетной записи, созданной программой.
 
-In `lib.rs`, update the `MessageAccount` struct with the following:
+В `lib.rs` обновите структуру `MessageAccount` следующим образом:
 
 ```rs filename="lib.rs"
 #[account]
@@ -1303,47 +1304,49 @@ pub struct MessageAccount {
 <details>
 {<summary>Explanation</summary>}
 
-The `#[account]` macro in an Anchor program is used to annotate structs that
-represent account data (data type to store in the AccountInfo's data field).
+Макрос `#[account]` в программе Anchor используется для аннотирования структур, 
+которые представляют данные учетной записи (тип данных для хранения 
+в поле данных AccountInfo).
 
-In this example, we're defining a `MessageAccount` struct to store a message
-created by users that contains three fields:
+В этом примере мы определяем структуру `MessageAccount` для хранения сообщения, 
+созданного пользователями и содержащего три поля:
 
-- `user`: A Pubkey representing the user who created the message account.
-- `message`: A String containing the user's message.
-- `bump`: A u8 storing the "bump" seed used in deriving the program derived
-  address (PDA). Storing this value saves compute by eliminating the need to
-  rederive it for each use in subsequent instructions.
-- `user` - A Pubkey representing the user who created the message account.
-- `message` - A String containing the user's message.
-- `bump` - A u8 storing the ["bump" seed](/docs/core/pda#canonical-bump) used in
-  deriving the program derived address (PDA). Storing this value saves compute
-  by eliminating the need to rederive it for each use in subsequent
-  instructions. When an account is created, the `MessageAccount` data will be
-  serialized and stored in the new account's data field.
+- `user`: публичный ключ, представляющий пользователя, создавшего учетную запись сообщения.
+- `message`: строка, содержащая сообщение пользователя.
+- `bump`: u8, хранящий начальное число "bump", используемое при получении 
+  программного адреса (PDA). Сохранение этого значения экономит вычислительные ресурсы, 
+  устраняя необходимость его повторного получения для каждого использования 
+  в последующих инструкциях.
+- `user` — публичный ключ, представляющий пользователя, создавшего учетную запись сообщения.
+- `message` — строка, содержащая сообщение пользователя.
+- `bump` — u8, хранящий [начальное число "bump"](/docs/core/pda#canonical-bump), 
+  используемое при получении программного адреса (PDA). Сохранение этого значения 
+  экономит вычислительные ресурсы, устраняя необходимость его повторного получения 
+  для каждого использования в последующих инструкциях. При создании учетной записи 
+  данные `MessageAccount` будут сериализованы и сохранены в поле данных новой учетной записи.
 
-Later, when reading from the account, this data can be deserialized back into
-the `MessageAccount` data type. The process of creating and reading the account
-data will be demonstrated in the testing section.
+Позже, при чтении из учетной записи, эти данные можно десериализовать обратно 
+в тип данных `MessageAccount`. Процесс создания и чтения данных аккаунта 
+будет продемонстрирован в разделе тестирования.
 
 </details>
 
-Build the program again by running `build` in the terminal.
+Соберите программу еще раз, запустив `build` в терминале.
 
 ```shell filename="Terminal"
 build
 ```
 
-We've defined what our message account will look like. Next, we'll implement the
-program instructions.
+Мы определили, как будет выглядеть наша учетная запись сообщений. 
+Далее реализуем инструкции программы.
 
-### Implement Create Instruction
+### Реализация инструкции создания
 
-Now, let's implement the `create` instruction to create and initialize the
-`MessageAccount`.
+Теперь давайте реализуем инструкцию create для создания и инициализации
+ `Аккаунт сообщения`.
 
-Start by defining the accounts required for the instruction by updating the
-`Create` struct with the following:
+Начните с определения учетных записей, необходимых для инструкции, 
+обновив структуру Create следующим образом:
 
 ```rs filename="lib.rs"
 #[derive(Accounts)]
@@ -1394,17 +1397,19 @@ pub struct Create<'info> {
 <details>
 {<summary>Explanation</summary>}
 
-The `#[derive(Accounts)]` macro in an Anchor program is used to annotate structs
-that represent a list of accounts required by an instruction where each field in
-the struct is an account.
+Макрос `#[derive(Accounts)]` в программе Anchor используется 
+для аннотирования структур, которые представляют список учетных записей, 
+требуемых инструкцией, где каждое поле в структуре является учетной записью.
 
-Each account (field) in the struct is annotated with an account type (ex.
-`Signer<'info>`) and can be further annotated with constraints (ex.
-`#[account(mut)]`). The account type along with account constraints are used to
-perform security checks on the accounts passed to the instruction.
+Каждая учетная запись (поле) в структуре помечается типом учетной записи 
+(например, `Signer<'info>`) и может быть дополнительно помечена ограничениями 
+(например, `#[account(mut)]`). Тип учетной записи вместе с ограничениями 
+учетной записи используются для проверки безопасности учетных записей, 
+передаваемых в инструкцию.
 
-The naming of each field is only for our understanding and has no effect on
-account validation, however, it is recommended to use descriptive account names.
+Именование каждого поля предназначено только для нашего понимания 
+и не влияет на проверку учетной записи, однако рекомендуется использовать 
+описательные имена учетных записей.
 
 ---
 
