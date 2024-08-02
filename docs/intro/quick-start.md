@@ -1413,42 +1413,43 @@ pub struct Create<'info> {
 
 ---
 
-The `Create` struct defines the accounts required for the `create` instruction.
+Структура `Create` определяет учетные записи, необходимые для инструкции `create`.
 
 1. `user: Signer<'info>`
 
-   - Represents the user creating the message account
-   - Marked as mutable (`#[account(mut)]`) as it pays for the new account
-   - Must be a signer to approve the transaction, as lamports are deducted from
-     the account
+ - Представляет пользователя, создающего учетную запись сообщения.
+ - Помечен как изменяемый (`#[account(mut)]`), поскольку он платит 
+   за новую учетную запись.
+ - Для подтверждения транзакции необходимо быть подписантом, 
+   так как лампорты списываются со счета.
 
 2. `message_account: Account<'info, MessageAccount>`
 
-   - The new account created to store the user's message
-   - `init` constraint indicates the account will be created in the instruction
-   - `seeds` and `bump` constraints indicate the address of the account is a
-     Program Derived Address (PDA)
-   - `payer = user` specifies the account paying for the creation of the new
-     account
-   - `space` specifies the number of bytes allocated to the new account's data
-     field
+ - Новая учетная запись, созданная для хранения сообщения пользователя.
+ - `init` - ограничение указывает, что учетная запись будет создана в инструкции
+ - `seeds` и `bump` - ограничения указывают, что адрес учетной записи 
+   является адресом, полученным программой (PDA).
+ - `payer = user` указывает учетную запись, оплачивающую создание 
+   новой учетной записи.
+ - `space` указывает количество байтов, выделенных для поля данных 
+   новой учетной записи.
 
 3. `system_program: Program<'info, System>`
 
-   - Required for creating new accounts
-   - Under the hood, the `init` constraint invokes the System Program to create
-     a new account allocated with the specified `space` and reassigns the
-     program owner to the current program.
+ - Требуется для создания новых учетных записей
+ - Внутри ограничение `init` вызывает системную программу 
+   для создания новой учетной записи, выделенной с указанным `пространством`, 
+   и переназначает владельца программы текущей программе.
+     
+---
+
+Аннотация `#[instruction(message: String)]` позволяет структуре `Create` 
+получить доступ к параметру `message` из инструкции `create`.
 
 ---
 
-The `#[instruction(message: String)]` annotation enables the `Create` struct to
-access the `message` parameter from the `create` instruction.
-
----
-
-The `seeds` and `bump` constraints are used together to specify that an
-account's address is a Program Derived Address (PDA).
+Ограничения `seeds` и `bump` используются вместе, чтобы указать, 
+что адрес учетной записи является адресом, полученным программой (PDA).
 
 ```rs filename="lib.rs"
 seeds = [b"message", user.key().as_ref()],
@@ -1474,6 +1475,26 @@ The `space` calculation (8 + 32 + 4 + message.len() + 1) allocates space for
 - User Message (String): 4 bytes for length + variable message length
 - PDA Bump seed (u8): 1 byte
 
+Ограничение `seeds` определяет дополнительные входные данные, 
+используемые для получения PDA.
+
+- `b"message"` — жестко запрограммированная строка в качестве первого начального числа.
+- `user.key().as_ref()` — открытый ключ учетной записи `user` 
+  в качестве второго начального числа.
+
+Ограничение `bump` сообщает Anchor автоматически найти и использовать 
+правильное начальное значение `bump`. Anchor будет использовать `seeds` 
+и `bump` для получения PDA.
+
+---
+
+Вычисление `space` (8 + 32 + 4 + message.len() + 1) выделяет пространство для типа данных `MessageAccount`:
+
+- Дискриминатор (идентификатор) Account - привязки учетной записи: 8 байт.
+- Адрес пользователя (Pubkey): 32 байта.
+- Сообщение пользователя (строка): длина 4 байта + переменная длина сообщения.
+- Начальное значение PDA Bump (u8): 1 байт
+
 ```rs filename="lib.rs"
 #[account]
 pub struct MessageAccount {
@@ -1483,17 +1504,17 @@ pub struct MessageAccount {
 }
 ```
 
-All accounts created through an Anchor program require 8 bytes for an account
-discriminator, which is an identifier for the account type that is automatically
-generated when the account is created.
+Для всех учетных записей, созданных с помощью программы Anchor, требуется 8 байтов 
+для дискриминатора учетной записи, который представляет собой идентификатор 
+типа учетной записи, который автоматически генерируется при создании учетной записи.
 
-A `String` type requires 4 bytes to store the length of the string, and the
-remaining length is the actual data.
+Типу String требуется 4 байта для хранения длины строки, а оставшаяся длина — 
+это фактические данные.
 
 </details>
 
-Next, implement the business logic for the `create` instruction by updating the
-`create` function with the following:
+Затем реализуйте бизнес-логику для инструкции `create`, обновив 
+функцию `create` следующим образом:
 
 ```rs filename="lib.rs"
 pub fn create(ctx: Context<Create>, message: String) -> Result<()> {
@@ -1532,40 +1553,40 @@ pub fn create(ctx: Context<Create>, message: String) -> Result<()> {
 The `create` function implements the logic for initializing a new message
 account's data. It takes two parameters:
 
-1. `ctx: Context<Create>` - Provides access to the accounts specified in the
-   `Create` struct.
-2. `message: String` - The user's message to be stored.
+1. `ctx: Context<Create>` — обеспечивает доступ к учетным записям, 
+   указанным в структуре `Create`.
+2. `message: String` — сообщение пользователя, которое нужно сохранить.
 
-The body of the function then performs the following logic:
+Затем тело функции выполняет следующую логику:
 
-1. Print a message to program logs using the `msg!()` macro.
+1. Распечатайте сообщение в журналы программы, используя макрос `msg!()`.
 
    ```rs
    msg!("Create Message: {}", message);
    ```
 
-2. Initializing Account Data:
+2. Инициализация данных учетной записи:
 
-   - Accesses the `message_account` from the context.
+ - Доступ к `message_account` из контекста.
 
    ```rs
    let account_data = &mut ctx.accounts.message_account;
    ```
 
-   - Sets the `user` field to the public key of the `user` account.
+   - Устанавливает в поле `user` открытый ключ учетной записи `user`.
 
    ```rs
    account_data.user = ctx.accounts.user.key();
    ```
 
-   - Sets the `message` field to the `message` from the function argument.
+   - Устанавливает в поле `message` значение `message` из аргумента функции.
 
    ```rs
    account_data.message = message;
    ```
 
-   - Sets the `bump` value used to derive the PDA, retrieved from
-     `ctx.bumps.message_account`.
+   - Устанавливает значение `bump`, используемое для получения PDA, 
+     полученное из `ctx.bumps.message_account`.
 
    ```rs
    account_data.bump = ctx.bumps.message_account;
@@ -1573,21 +1594,20 @@ The body of the function then performs the following logic:
 
 </details>
 
-Rebuild the program.
+Пересоберите программу.
 
 ```shell filename="Terminal"
 build
 ```
 
-### Implement Update Instruction
+### Внедрить инструкцию по обновлению
 
-Next, implement the `update` instruction to update the `MessageAccount` with a
-new message.
+Затем выполните инструкцию `update`, чтобы обновить `MessageAccount` новым сообщением.
 
-Just as before, the first step is to specify the accounts required by the
-`update` instruction.
+Как и прежде, первым шагом является указание учетных записей, 
+требуемых для инструкции `update`.
 
-Update the `Update` struct with the following:
+Обновите структуру `Update`, указав следующее:
 
 ```rs filename="lib.rs"
 #[derive(Accounts)]
@@ -1640,40 +1660,42 @@ pub struct Update<'info> {
 <details>
 {<summary>Explanation</summary>}
 
-The `Update` struct defines the accounts required for the `update` instruction.
+Структура `Update` определяет учетные записи,
+необходимые для инструкции `update`.
 
 1. `user: Signer<'info>`
 
-   - Represents the user updating the message account
-   - Marked as mutable (`#[account(mut)]`) as it may pay for additional space
-     for the `message_account` if needed
-   - Must be a signer to approve the transaction
+ - Представляет пользователя, обновляющего учетную запись сообщения.
+ - Помечено как изменяемое (`#[account(mut)]`), так как при необходимости
+   может потребоваться дополнительное место для `message_account`.
+ - Должен быть подписантом, чтобы одобрить транзакцию
 
 2. `message_account: Account<'info, MessageAccount>`
 
-   - The existing account storing the user's message that will be updated
-   - `mut` constraint indicates this account's data will be modified
-   - `realloc` constraint allows for resizing the account's data
-   - `seeds` and `bump` constraints ensure the account is the correct PDA
+ - Существующая учетная запись, в которой хранится сообщение пользователя, которое будет обновлено.
+ - `mut` - ограничение указывает, что данные этой учетной записи будут изменены.
+ - `realloc` - ограничение позволяет изменять размер данных учетной записи.
+ - `seeds` и`bump` - ограничения гарантируют, что учетная запись является правильным PDA.
 
 3. `system_program: Program<'info, System>`
-   - Required for potential reallocation of account space
-   - The `realloc` constraint invokes the System Program to adjust the account's
-     data size
+ - Требуется для потенциального перераспределения пространства учетной записи.
+ - `realloc` - ограничение  вызывает системную программу 
+   для настройки размера данных учетной записи.
 
 ---
 
-Note that the `bump = message_account.bump` constraint uses the bump seed stored
-on the `mesesage_account`, rather than having Anchor recalculate it.
+Обратите внимание, что ограничение `bump = message_account.bump` использует 
+начальное значение bump seed, хранящееся в `mesesage_account`, вместо того, 
+чтобы Anchor пересчитывал его.
 
 ---
 
-`#[instruction(message: String)]` annotation enables the `Update` struct to
-access the `message` parameter from the `update` instruction.
+`#[instruction(message: String)]` - аннотация позволяет структуре `Update` 
+получить доступ к параметру `message` из инструкции `update`.
 
 </details>
 
-Next, implement the logic for the `update` instruction.
+Затем реализуйте логику инструкции `update`.
 
 ```rs filename="lib.rs"
 pub fn update(ctx: Context<Update>, message: String) -> Result<()> {
@@ -1705,34 +1727,34 @@ pub fn update(ctx: Context<Update>, message: String) -> Result<()> {
 <details>
 {<summary>Explanation</summary>}
 
-The `update` function implements the logic for modifying an existing message
-account. It takes two parameters:
+Функция `update` реализует логику изменения существующей учетной записи сообщения. 
+Он принимает два параметра:
 
-1. `ctx: Context<Update>` - Provides access to the accounts specified in the
-   `Update` struct.
-2. `message: String` - The new message to replace the existing one.
+1. `ctx: Context<Update>` — обеспечивает доступ к учетным записям, 
+   указанным в структуре `Update`.
+2. `message: String` — Новое сообщение взамен существующего.
 
-The body of the function then:
+Тогда тело функции:
 
-1. Print a message to program logs using the `msg!()` macro.
+1. печатаут сообщение в логи (журналы) программы, используя макрос `msg!()`.
 
-2. Updates Account Data:
-   - Accesses the `message_account` from the context.
-   - Sets the `message` field to the new `message` from the function argument.
+2. Обновляет данные учетной записи (Account Data):
+ - Доступ к `message_account` из контекста.
+ - Устанавливает в поле `message` новое `message` из аргумента функции.
 
 </details>
 
-Rebuld the program
+Пересобрать программу
 
 ```shell filename="Terminal"
 build
 ```
 
-### Implement Delete Instruction
+### Выполнить инструкцию удаления
 
-Next, implement the `delete` instruction to close the `MessageAccount`.
+Затем выполните инструкцию `delete`, чтобы закрыть `MessageAccount`.
 
-Update the `Delete` struct with the following:
+Обновите структуру `Delete` следующим образом:
 
 ```rs filename="lib.rs"
 #[derive(Accounts)]
@@ -1777,27 +1799,27 @@ pub struct Delete<'info> {
 <details>
 {<summary>Explanation</summary>}
 
-The `Delete` struct defines the accounts required for the `delete` instruction:
+Структура `Delete` определяет учетные записи, необходимые для инструкции `delete`:
 
 1. `user: Signer<'info>`
 
-   - Represents the user closing the message account
-   - Marked as mutable (`#[account(mut)]`) as it will receive the lamports from
-     the closed account
-   - Must be a signer to ensure only the correct user can close their message
-     account
+ - Представляет пользователя, закрывающего учетную запись сообщения.
+ - Помечен как изменяемый (`#[account(mut)]`), так как он будет получать 
+   лампорты из закрытого аккаунта.
+ - Должен быть подписывающим лицом, чтобы гарантировать, что только правильный пользователь 
+   может закрыть свою учетную запись сообщения.
 
 2. `message_account: Account<'info, MessageAccount>`
 
-   - The account being closed
-   - `mut` constraint indicates this account will be modified
-   - `seeds` and `bump` constraints ensure the account is the correct PDA
-   - `close = user` constraint specifies that this account will be closed and
-     its lamports transferred to the `user` account
+ - Счет (Account) закрывается
+ - `mut` - ограничение указывает, что эта учетная запись будет изменена
+ - `seeds` и`bump` - ограничения гарантируют, что учетная запись является правильным PDA.
+ - `close = user` - ограничение  указывает, что эта учетная запись будет закрыта, 
+   а ее лампорты перенесены в учетную запись `user`.
 
 </details>
 
-Next, implement the logic for the `update` instruction.
+Затем реализуйте логику инструкции `update`.
 
 ```rs filename="lib.rs"
 pub fn delete(_ctx: Context<Delete>) -> Result<()> {
@@ -1825,29 +1847,28 @@ pub fn delete(_ctx: Context<Delete>) -> Result<()> {
 <details>
 {<summary>Explanation</summary>}
 
-The `delete` function takes one parameter:
+Функция delete принимает один параметр:
 
-1. `_ctx: Context<Delete>` - Provides access to the accounts specified in the
-   `Delete` struct. The `_ctx` syntax indicates we won't be using the Context in
-   the body of the function.
+1. `_ctx: Context<Delete>` — обеспечивает доступ к учетным записям, 
+указанным в структуре `Delete`. Синтаксис `_ctx` указывает, 
+что мы не будем использовать контекст в теле функции.
 
-The body of the function only prints a message to program logs using the
-`msg!()` macro. The function does not require any additional logic because the
-actual closing of the account is handled by the `close` constraint in the
-`Delete` struct.
+Тело функции печатает сообщение в логи (журналы) программы только с помощью макроса `msg!()`. 
+Функция не требует какой-либо дополнительной логики, поскольку 
+фактическое закрытие учетной записи обрабатывается ограничением `close` в структуре `Delete`.
 
 </details>
 
-Rebuild the program.
+Пересоберите программу.
 
 ```shell filename="Terminal"
 build
 ```
 
-### Deploy Program
+### Развернуть программу
 
-The basic CRUD program is now complete. Deploy the program by running `deploy`
-in the Playground terminal.
+Базовая программа CRUD завершена. Разверните программу, запустив `deploy`
+в терминале игровой площадки.
 
 ```shell filename="Terminal"
 deploy
@@ -1864,9 +1885,9 @@ Deployment successful. Completed in 17s.
 
 </details>
 
-### Set Up Test File
+### Настроить тестовый файл
 
-Included with the starter code is also a test file in `anchor.test.ts`.
+В стартовый код также включен тестовый файл `anchor.test.ts`.
 
 ```ts filename="anchor.test.ts"
 import { PublicKey } from "@solana/web3.js";
@@ -1880,7 +1901,7 @@ describe("pda", () => {
 });
 ```
 
-Add the code below inside `describe`, but before the `it` sections.
+Добавьте приведенный ниже код внутри `describe`, но перед разделами `it`.
 
 ```ts filename="anchor.test.ts"
 const program = pg.program;
@@ -1920,19 +1941,20 @@ const [messagePda, messageBump] = PublicKey.findProgramAddressSync(
 <details>
 {<summary>Explanation</summary>}
 
-In this section, we are simply setting up the test file.
+В этом разделе мы просто настраиваем тестовый файл.
 
-Solana Playground removes some boilerplate setup where `pg.program` allows us to
-access the client library for interacting with the program, while `pg.wallet` is
-your playground wallet.
+Solana Playground удаляет некоторые шаблонные настройки, где `pg.program` 
+позволяет нам получить доступ к клиентской библиотеке для взаимодействия с программой, 
+а `pg.wallet` — это ваш игровой кошелек.
 
 ```ts filename="anchor.test.ts"
 const program = pg.program;
 const wallet = pg.wallet;
 ```
 
-As part of the setup, we derive the message account PDA. This demonstrates how
-to derive the PDA in Javascript using the seeds specified in the program.
+В рамках настройки мы получаем учетную запись сообщений PDA. 
+Это демонстрирует, как получить КПК в Javascript, используя начальные значения, 
+указанные в программе.
 
 ```ts filename="anchor.test.ts"
 const [messagePda, messageBump] = PublicKey.findProgramAddressSync(
@@ -1943,8 +1965,9 @@ const [messagePda, messageBump] = PublicKey.findProgramAddressSync(
 
 </details>
 
-Run the test file by running `test` in the Playground terminal to check the file
-runs as expected. We will implement the tests in the following steps.
+Запустите тестовый файл, запустив `test` в терминале Playground, 
+чтобы убедиться, что файл работает должным образом. 
+Мы реализуем тесты на следующих шагах.
 
 ```shell filename="Terminal"
 test
@@ -1968,7 +1991,7 @@ Running tests...
 
 ### Invoke Create Instruction
 
-Update the first test with the following:
+Обновите первый тест следующим образом:
 
 ```ts filename="anchor.test.ts"
 it("Create Message Account", async () => {
@@ -2026,8 +2049,8 @@ it("Create Message Account", async () => {
 <details>
 {<summary>Explanation</summary>}
 
-First, we send a transaction that invokes the `create` instruction, passing in
-"Hello, World!" as the message.
+Сначала мы отправляем транзакцию, которая вызывает инструкцию create, 
+передавая "Hello, World!" как сообщение.
 
 ```ts filename="anchor.test.ts"
 const message = "Hello, World!";
@@ -2039,8 +2062,8 @@ const transactionSignature = await program.methods
   .rpc({ commitment: "confirmed" });
 ```
 
-Once the transaction is sent and the account is created, we then fetch the
-account using its address (`messagePda`).
+После отправки транзакции и создания учетной записи 
+мы извлекаем учетную запись, используя ее адрес (`messagePda`).
 
 ```ts filename="anchor.test.ts"
 const messageAccount = await program.account.messageAccount.fetch(
@@ -2049,7 +2072,8 @@ const messageAccount = await program.account.messageAccount.fetch(
 );
 ```
 
-Lastly, we log the account data and a link to view the transaction details.
+Наконец, мы регистрируем данные учетной записи и ссылку для просмотра 
+деталей транзакции.
 
 ```ts filename="anchor.test.ts"
 console.log(JSON.stringify(messageAccount, null, 2));
@@ -2061,9 +2085,9 @@ console.log(
 
 </details>
 
-### Invoke Update Instruction
+### Вызов инструкции обновления
 
-Update the second test with the following:
+Обновите второй тест следующим образом:
 
 ```ts filename="anchor.test.ts"
 it("Update Message Account", async () => {
@@ -2121,8 +2145,8 @@ it("Update Message Account", async () => {
 <details>
 {<summary>Explanation</summary>}
 
-First, we send a transaction that invokes the `update` instruction, passing in
-"Hello, Solana!" as the new message.
+Сначала мы отправляем транзакцию, которая вызывает инструкцию обновления, 
+передавая "Привет, Солана!" как новое сообщение.
 
 ```ts filename="anchor.test.ts"
 const message = "Hello, Solana!";
@@ -2134,8 +2158,8 @@ const transactionSignature = await program.methods
   .rpc({ commitment: "confirmed" });
 ```
 
-Once the transaction is sent and the account is updated, we then fetch the
-account using its address (`messagePda`).
+После отправки транзакции и обновления учетной записи мы извлекаем учетную запись, 
+используя ее адрес (`messagePda`).
 
 ```ts filename="anchor.test.ts"
 const messageAccount = await program.account.messageAccount.fetch(
@@ -2144,7 +2168,7 @@ const messageAccount = await program.account.messageAccount.fetch(
 );
 ```
 
-Lastly, we log the account data and a link to view the transaction details.
+Наконец, мы регистрируем данные учетной записи и ссылку для просмотра деталей транзакции.
 
 ```ts filename="anchor.test.ts"
 console.log(JSON.stringify(messageAccount, null, 2));
@@ -2156,9 +2180,9 @@ console.log(
 
 </details>
 
-### Invoke Delete Instruction
+### Вызов инструкции удаления
 
-Update the third test with the following:
+Обновите третий тест следующим образом:
 
 ```ts filename="anchor.test.ts"
 it("Delete Message Account", async () => {
@@ -2214,8 +2238,8 @@ it("Delete Message Account", async () => {
 <details>
 {<summary>Explanation</summary>}
 
-First, we send a transaction that invokes the `delete` instruction to close the
-message account.
+Сначала мы отправляем транзакцию, которая вызывает инструкцию `delete` 
+для закрытия учетной записи сообщения.
 
 ```ts filename="anchor.test.ts"
 const transactionSignature = await program.methods
@@ -2226,9 +2250,10 @@ const transactionSignature = await program.methods
   .rpc({ commitment: "confirmed" });
 ```
 
-Once the transaction is sent and the account is closed, we attempt to fetch the
-account using its address (`messagePda`) using `fetchNullable` since we expect
-the return value to be null because the account is closed.
+Как только транзакция отправлена ​​и учетная запись закрыта, 
+мы пытаемся получить учетную запись, используя ее адрес (`messagePda`), 
+используя `fetchNullable`, поскольку мы ожидаем, что возвращаемое значение 
+будет нулевым, поскольку учетная запись закрыта.
 
 ```ts filename="anchor.test.ts"
 const messageAccount = await program.account.messageAccount.fetchNullable(
@@ -2237,8 +2262,9 @@ const messageAccount = await program.account.messageAccount.fetchNullable(
 );
 ```
 
-Lastly, we log the account data and a link to view the transaction details where
-the account data should be logged as null.
+Наконец, мы регистрируем данные учетной записи и ссылку для просмотра 
+деталей транзакции, где данные учетной записи должны быть зарегистрированы 
+как нулевые.
 
 ```ts filename="anchor.test.ts"
 console.log(JSON.stringify(messageAccount, null, 2));
@@ -2250,10 +2276,10 @@ console.log(
 
 </details>
 
-### Run Test
+### Запустить тест
 
-Once the tests are set up, run the test file by running `test` in the Playground
-terminal.
+После настройки тестов запустите тестовый файл, запустив `test` 
+в терминале Playground.
 
 ```shell filename="Terminal"
 test
@@ -2291,27 +2317,28 @@ Running tests...
 
 </Steps>
 
-## Cross Program Invocation
+## Межпрограммный вызов
 
-In this section, we'll update our existing CRUD program to include Cross Program
-Invocations (CPIs). We'll modify the program to transfer SOL between accounts in
-the `update` and `delete` instructions, demonstrating how to interact with other
-programs (in this case, the System Program) from within our program.
+В этом разделе мы обновим нашу существующую программу CRUD, 
+включив в нее межпрограммные вызовы (CPI). Мы модифицируем программу 
+для передачи SOL между учетными записями в инструкциях `update` и `delete`, 
+демонстрируя, как взаимодействовать с другими программами 
+(в данном случае с системной программой) изнутри нашей программы.
 
-The purpose of this section is to walk through the process of implementing CPIs
-in a Solana program using the Anchor framework, building upon the PDA concepts
-we explored in the previous section. For more details, refer to the
-[Cross Program Invocation](/docs/core/cpi) page.
+Цель этого раздела — пройти через процесс реализации CPI в программе Solana 
+с использованием платформы Anchor, основываясь на концепциях PDA, 
+которые мы рассмотрели в предыдущем разделе. Более подробную информацию 
+можно найти на странице [Межпрограммный вызов](/docs/core/cpi).
 
 <Steps>
 
-### Modify Update Instruction
+### Изменить инструкцию по обновлению
 
-First, we'll implement a simple "pay-to-update" mechanism by modifying the
-`Update` struct and `update` function.
+Сначала мы реализуем простой механизм `pay-to-update`, 
+изменив структуру `Update` и функцию `update`.
 
-Begin by updating the `lib.rs` file to bring into scope items from the
-`system_program` module.
+Начните с обновления файла `lib.rs`, чтобы включить в него элементы 
+из модуля `system_program`.
 
 ```rs filename="lib.rs"
 use anchor_lang::system_program::{transfer, Transfer};
@@ -2327,9 +2354,9 @@ use anchor_lang::system_program::{transfer, Transfer};
 
 </details>
 
-Next, update the `Update` struct to include an additional account called
-`vault_account`. This account, controlled by our program, will receive SOL from
-a user when they update their message account.
+Затем обновите структуру `Update`, включив в нее дополнительную учетную 
+запись `vault_account`. Эта учетная запись, контролируемая нашей программой, 
+будет получать SOL от пользователя, когда он обновит свою учетную запись сообщений.
 
 ```rs filename="lib.rs"
 #[account(
@@ -2374,12 +2401,13 @@ pub struct Update<'info> {
 <details>
 {<summary>Explanation</summary>}
 
-We're adding a new account called `vault_account` to our `Update` struct. This
-account serves as a program-controlled "vault" that will receive SOL from users
-when they update their messages.
+Мы добавляем новую учетную запись с именем `vault_account` в нашу структуру `Update`. 
+Эта учетная запись служит программно-управляемым `vault` ('"хранилищем"), 
+которое будет получать SOL от пользователей, когда они обновляют свои сообщения.
 
-By using a PDA for the vault, we create a program-controlled account unique to
-each user, enabling us to manage user funds within our program's logic.
+Используя PDA для vault ("хранилища"), мы создаем управляемую программой учетную запись, 
+уникальную для каждого пользователя, что позволяет нам управлять средствами пользователей 
+в рамках логики нашей программы.
 
 ---
 
