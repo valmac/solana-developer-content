@@ -1,194 +1,208 @@
 ---
 sidebarSortOrder: 1
-sidebarLabel: Solana Account Model
-title: Solana Account Model
+sidebarLabel: Модель учетной записи Solana
+title: Модель учетной записи Solana
 altRoutes:
   - /docs/core
 ---
 
-On Solana, all data is stored in what are referred to as "accounts”. The way
-data is organized on Solana resembles a
-[key-value store](https://en.wikipedia.org/wiki/Key%E2%80%93value_database),
-where each entry in the database is called an "account".
+В Solana все данные хранятся в так называемых «учетных записях». 
+Способ организации данных в Solana напоминает 
+[хранилище значений ключей](https://en.wikipedia.org/wiki/Key%E2%80). %93value_database), 
+где каждая запись в базе данных называется «учетной записью».
 
 ![Accounts](/assets/docs/core/accounts/accounts.svg)
 
-## Key Points
+## Ключевые моменты
 
-- Accounts can store up to 10MB of data, which can consist of either executable
-  program code or program state.
+- Учетные записи могут хранить до 10 МБ данных, которые могут состоять 
+  из исполняемого программного кода или состояния программы.
 
-- Accounts require a rent deposit in SOL, proportional to the amount of data
-  stored, which is fully refundable when the account is closed.
+- Для учетных записей требуется внести залог за аренду в SOL, 
+  пропорциональный объему хранящихся данных, который полностью возвращается 
+  при закрытии учетной записи.
 
-- Every account has a program "owner". Only the program that owns an account can
-  modify its data or deduct its lamport balance. However, anyone can increase
-  the balance.
+- У каждого аккаунта есть программный «владелец». Только программа, 
+  владеющая учетной записью, может изменять ее данные или списывать баланс лампы. 
+  Однако увеличить баланс может любой желающий.
 
-- Programs (smart contracts) are stateless accounts that store executable code.
+— Программы (смарт-контракты) — это учетные записи без сохранения состояния, 
+  в которых хранится исполняемый код.
 
-- Data accounts are created by programs to store and manage program state.
+- Учетные записи данных создаются программами для хранения и управления 
+  состоянием программы.
 
-- Native programs are built-in programs included with the Solana runtime.
+- Собственные программы — это встроенные программы, включенные в среду выполнения 
+  Solana.
 
-- Sysvar accounts are special accounts that store network cluster state.
+— Учетные записи Sysvar — это специальные учетные записи, в которых хранится 
+  состояние сетевого кластера.
 
-## Account
+## Счет
 
-Each account is identifiable by its unique address, represented as 32 bytes in
-the format of an [Ed25519](https://ed25519.cr.yp.to/) `PublicKey`. You can think
-of the address as the unique identifier for the account.
+Каждая учетная запись идентифицируется по ее уникальному адресу, 
+представленному в виде 32 байтов в формате 
+[Ed25519](https://ed25519.cr.yp.to/) `PublicKey`. 
+Вы можете рассматривать адрес как уникальный идентификатор учетной записи.
 
 ![Account Address](/assets/docs/core/accounts/account-address.svg)
 
-This relationship between the account and its address can be thought of as a
-key-value pair, where the address serves as the key to locate the corresponding
-on-chain data of the account.
+Эту связь между учетной записью и ее адресом можно рассматривать 
+как пару ключ-значение, где адрес служит ключом для поиска 
+соответствующих данных учетной записи в цепочке.
 
-### AccountInfo
+### Информация об аккаунте
 
-Accounts have a
-[max size of 10MB](https://github.com/solana-labs/solana/blob/27eff8408b7223bb3c4ab70523f8a8dca3ca6645/sdk/program/src/system_instruction.rs#L85)
-(10 Mega Bytes) and the data stored on every account on Solana has the following
-structure known as the
+Учетные записи имеют 
+[максимальный размер 10 МБ](https://github.com/solana-labs/solana/blob/27eff8408b7223bb3c4ab70523f8a8dca3ca6645/sdk/program/src/system_instruction.rs#L85) 
+(10 Мегабайт), а данные хранящиеся в каждой учетной записи на Solana 
+имеют следующую структуру, известную как 
 [AccountInfo](https://github.com/solana-labs/solana/blob/27eff8408b7223bb3c4ab70523f8a8dca3ca6645/sdk/program/src/account_info.rs#L19).
 
 ![AccountInfo](/assets/docs/core/accounts/accountinfo.svg)
 
-The `AccountInfo` for each account includes the following fields:
+`AccountInfo` для каждой учетной записи включает следующие поля:
 
-- `data`: A byte array that stores the state of an account. If the account is a
-  program (smart contract), this stores executable program code. This field is
-  often referred to as the "account data".
-- `executable`: A boolean flag that indicates if the account is a program.
-- `lamports`: A numeric representation of the account's balance in
-  [lamports](/docs/terminology.md#lamport), the smallest unit of SOL (1 SOL = 1
-  billion lamports).
-- `owner`: Specifies the public key (program ID) of the program that owns the
-  account.
+- `data`: массив байтов, в котором хранится состояние учетной записи. 
+  Если учетная запись является программой (смарт-контрактом), 
+  то здесь хранится исполняемый программный код. 
+  Это поле часто называют `account data` («данными учетной записи»).
+- `executable`: логический флаг, указывающий, является ли учетная запись программой.
+- `lamports`: числовое представление баланса счета в
+ [лампортах](/docs/terminology.md#lamport), наименьшая единица СОЛ 
+ (1 SOL = 1 миллиард lamports = 10^9 lamports).
+- `owner`: указывает открытый ключ (идентификатор программы) программы, 
+  которой принадлежит учетная запись.
 
-As a key part of the Solana Account Model, every account on Solana has a
-designated "owner", specifically a program. Only the program designated as the
-owner of an account can modify the data stored on the account or deduct the
-lamport balance. It's important to note that while only the owner may deduct the
-balance, anyone can increase the balance.
+Ключевой частью модели учетной записи Solana является то, что 
+каждая учетная запись на Solana имеет назначенного «владельца», а именно программу. 
+Только программа, назначенная владельцем учетной записи, может изменять данные, 
+хранящиеся в учетной записи, или списывать баланс лампы. Важно отметить, 
+что хотя списать баланс может только владелец, увеличить баланс может любой желающий.
 
-> To store data on-chain, a certain amount of SOL must be transferred to an
-> account. The amount transferred is proportional to the size of the data stored
-> on the account. This concept is commonly referred to as “rent”. However, you
-> can think of "rent" more like a "deposit" because the SOL allocated to an
-> account can be fully recovered when the account is closed.
+> Для хранения данных в сети необходимо
+> перевести определенное количество SOL на учетную запись. 
+> Переведенная сумма пропорциональна размеру данных, хранящихся на счете. 
+> Это понятие обычно называют «рентой». Однако вы можете думать об «арендной плате» 
+> скорее как о «депозите», поскольку SOL, выделенный на учетную запись, 
+> может быть полностью возвращен после закрытия учетной записи.
 
-## Native Programs
+## Нативные программы
 
-Solana contains a small handful of native programs that are part of the
-validator implementation and provide various core functionalities for the
-network. You can find the full list of native programs
-[here](https://docs.solanalabs.com/runtime/programs).
+Solana содержит небольшое количество собственных программ, которые являются частью
+реализацию валидатора и предоставление различных основных функций сети. 
+Полный список собственных программ можно найти 
+[здесь](https://docs.solanalabs.com/runtime/programs).
 
-When developing custom programs on Solana, you will commonly interact with two
-native programs, the System Program and the BPF Loader.
+При разработке пользовательских программ в Solana вы обычно будете взаимодействовать 
+с двумя собственными программами: системной программой и загрузчиком BPF.
 
-### System Program
+### Системная программа
 
-By default, all new accounts are owned by the
-[System Program](https://github.com/solana-labs/solana/tree/27eff8408b7223bb3c4ab70523f8a8dca3ca6645/programs/system/src).
-The System Program performs several key tasks such as:
+По умолчанию все новые учетные записи принадлежат 
+[Системной программе](https://github.com/solana-labs/solana/tree/27eff8408b7223bb3c4ab70523f8a8dca3ca6645/programs/system/src). 
+Системная программа выполняет несколько ключевых задач, таких как:
 
-- [New Account Creation](https://github.com/solana-labs/solana/blob/27eff8408b7223bb3c4ab70523f8a8dca3ca6645/programs/system/src/system_processor.rs#L145):
-  Only the System Program can create new accounts.
-- [Space Allocation](https://github.com/solana-labs/solana/blob/27eff8408b7223bb3c4ab70523f8a8dca3ca6645/programs/system/src/system_processor.rs#L70):
-  Sets the byte capacity for the data field of each account.
-- [Assign Program Ownership](https://github.com/solana-labs/solana/blob/27eff8408b7223bb3c4ab70523f8a8dca3ca6645/programs/system/src/system_processor.rs#L112):
-  Once the System Program creates an account, it can reassign the designated
-  program owner to a different program account. This is how custom programs take
-  ownership of new accounts created by the System Program.
+- [Создание новой учетной записи](https://github.com/solana-labs/solana/blob/27eff8408b7223bb3c4ab70523f8a8dca3ca6645/programs/system/src/system_processor.rs#L145): 
+  только системная программа может создавать новые учетные записи.
+- [Распределение пространства](https://github.com/solana-labs/solana/blob/27eff8408b7223bb3c4ab70523f8a8dca3ca6645/programs/system/src/system_processor.rs#L70): 
+  устанавливает емкость байтов для поля данных каждой учетной записи.
+- [Назначить владельца программы](https://github.com/solana-labs/solana/blob/27eff8408b7223bb3c4ab70523f8a8dca3ca6645/programs/system/src/system_processor.rs#L112): 
+  как только системная программа создаст учетную запись, она сможет 
+  переназначить назначенного владельца программы в другую 
+  учетную запись программы. Таким образом пользовательские программы 
+  становятся владельцами новых учетных записей, созданных 
+  системной программой.
 
-On Solana, a "wallet" is simply an account owned by the System Program. The
-lamport balance of the wallet is the amount of SOL owned by the account.
+В Solana «кошелек» — это просто учетная запись, принадлежащая системной программе. 
+Лампортовый баланс кошелька — это количество SOL, принадлежащее учетной записи.
 
-![System Account](/assets/docs/core/accounts/system-account.svg)
+![Системная учетная запись](/assets/docs/core/accounts/system-account.svg)
 
-> Only accounts owned by the System Program can be used as transaction fee
-> payers.
+> В качестве плательщиков комиссии за транзакцию могут использоваться только счета, 
+> принадлежащие Системной программе.
 
-### BPFLoader Program
+### Программа BPFLoader
 
-The
-[BPF Loader](https://github.com/solana-labs/solana/tree/27eff8408b7223bb3c4ab70523f8a8dca3ca6645/programs/bpf_loader/src)
-is the program designated as the "owner" of all other programs on the network,
-excluding Native Programs. It is responsible for deploying, upgrading, and
-executing custom programs.
+[Загрузчик BPF](https://github.com/solana-labs/solana/tree/27eff8408b7223bb3c4ab70523f8a8dca3ca6645/programs/bpf_loader/src) 
+— это программа, назначенная «владельцем» всех других программ в сети, 
+за исключением собственных программ. Он отвечает за развертывание, 
+обновление и выполнение пользовательских программ.
 
-## Sysvar Accounts
+## Сисвар-аккаунты
 
-Sysvar accounts are special accounts located at predefined addresses that
-provide access to cluster state data. These accounts are dynamically updated
-with data about the network cluster. You can find the full list of Sysvar
-Accounts [here](https://docs.solanalabs.com/runtime/sysvars).
+Учетные записи Sysvar — это специальные учетные записи, расположенные по 
+заранее определенным адресам, которые обеспечивают доступ к данным 
+о состоянии кластера. Эти учетные записи динамически обновляются данными 
+о сетевом кластере. Полный список учетных записей Sysvar можно найти 
+[здесь](https://docs.solanalabs.com/runtime/sysvars).
 
-## Custom Programs
+## Пользовательские программы
 
-On Solana, “smart contracts” are referred to as
-[programs](/docs/core/programs.md). A program is an account that contains
-executable code and is indicated by an “executable” flag that is set to true.
+В Solana «умные контракты» называются [программами](/docs/core/programs.md). 
+Программа — это учетная запись, которая содержит исполняемый код и 
+обозначается флагом `executable` («исполняемый»), для которого установлено 
+значение true.
 
-For a more detailed explanation of the program deployment process, refer to the
-[Deploying Programs](/docs/programs/deploying.md) page of this documentation.
+Более подробное объяснение процесса развертывания программы можно найти 
+на странице [Развертывание программ](/docs/programs/deploying.md) 
+данной документации.
 
-### Program Account
+### Программный аккаунт
 
-When new programs are
-[deployed](https://github.com/solana-labs/solana/blob/27eff8408b7223bb3c4ab70523f8a8dca3ca6645/programs/bpf_loader/src/lib.rs#L498)
-on Solana, technically three separate accounts are created:
+Когда новые программы 
+[развертываются](https://github.com/solana-labs/solana/blob/27eff8408b7223bb3c4ab70523f8a8dca3ca6645/programs/bpf_loader/src/lib.rs#L498) 
+на Solana, технически создаются три отдельные учетные записи:
 
-- **Program Account**: The main account representing an on-chain program. This
-  account stores the address of an executable data account (which stores the
-  compiled program code) and the update authority for the program (address
-  authorized to make changes to the program).
-- **Program Executable Data Account**: An account that contains the executable
-  byte code of the program.
-- **Buffer Account**: A temporary account that stores byte code while a program
-  is being actively deployed or upgraded. Once the process is complete, the data
-  is transferred to the Program Executable Data Account and the buffer account
-  is closed.
+- **Program Account**: основная учетная запись, представляющая программу в сети. 
+  В этой учетной записи хранится адрес учетной записи исполняемых данных 
+  (в которой хранится скомпилированный программный код) и полномочия 
+  обновления программы (адрес, уполномоченный вносить изменения в программу).
+- **Program Executable Data Account**: учетная запись, содержащая 
+  исполняемый байт-код программы.
+- **Buffer Account**: временная учетная запись, в которой хранится байт-код 
+  во время активного развертывания или обновления программы. 
+  После завершения процесса данные передаются в учетную запись 
+  исполняемых данных программы, а учетная запись буфера закрывается.
 
-For example, here are links to the Solana Explorer for the Token Extensions
-[Program Account](https://explorer.solana.com/address/TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb)
-and its corresponding
-[Program Executable Data Account](https://explorer.solana.com/address/DoU57AYuPFu2QU514RktNPG22QhApEjnKxnBcu4BHDTY).
+Например, вот ссылки на Solana Explorer для расширений токенов 
+[Учетная запись программы] (https://explorer.solana.com/address/TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb)
+и соответствующую ему 
+[Учетную запись исполняемых данных программы](https://explorer.solana.com/address/DoU57AYuPFu2QU514RktNPG22QhApEjnKxnBcu4BHDTY).
 
 ![Program and Executable Data Accounts](/assets/docs/core/accounts/program-account-expanded.svg)
 
-For simplicity, you can think of the "Program Account" as the program itself.
+Для простоты вы можете думать об «Program Account» как о самой программе.
 
 ![Program Account](/assets/docs/core/accounts/program-account-simple.svg)
 
-> The address of the "Program Account" is commonly referred to as the “Program
-> ID”, which is used to invoke the program.
+> Адрес «Program Account» обычно называют «Program ID», 
+> который используется для запуска программы.
 
-### Data Account
+### Data Account - Данные учетной записи
 
-Solana programs are "stateless", meaning that program accounts only contain the
-program's executable byte code. To store and modify additional data, new
-accounts must be created. These accounts are commonly referred to as “data
-accounts”.
+Программы Solana не имеют состояния, что означает, что учетные записи 
+программ содержат только исполняемый байт-код программы. 
+Для хранения и изменения дополнительных данных необходимо создавать 
+новые учетные записи. Эти учетные записи обычно называются "Data Account" 
+(«учетными записями данных»).
 
-Data accounts can store any arbitrary data as defined in the owner program's
-code.
+Data Account (Учетные записи данных) могут хранить любые произвольные данные, 
+определенные в коде программы-владельца.
 
 ![Data Account](/assets/docs/core/accounts/data-account.svg)
 
-Note that only the [System Program](/docs/core/accounts.md#system-program) can
-create new accounts. Once the System Program creates an account, it can then
-transfer ownership of the new account to another program.
+Обратите внимание, что только [Системная программа](/docs/core/accounts.md#system-program) 
+может создавать новые учетные записи. Как только системная программа создаст учетную запись, 
+она может передать право собственности на новую учетную запись другой программе.
 
-In other words, creating a data account for a custom program requires two steps:
+Другими словами, создание учетной записи данных для пользовательской программы 
+требует двух шагов:
 
-1. Invoke the System Program to create an account, which then transfers
-   ownership to a custom program
-2. Invoke the custom program, which now owns the account, to then initialize the
-   account data as defined in the program code
+1. Вызовите системную программу, чтобы создать учетную запись, 
+   которая затем передает право собственности пользовательской программе.
+2. Вызовите специальную программу, которая теперь владеет учетной записью, 
+  чтобы затем инициализировать данные учетной записи, как определено в программном коде.
 
-This data account creation process is often abstracted as a single step, but
-it's helpful to understand the underlying process.
+Этот процесс создания учетной записи данных часто рассматривается как один шаг, 
+но полезно понять основной процесс.
