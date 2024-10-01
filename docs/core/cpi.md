@@ -1,77 +1,82 @@
 ---
-title: Cross Program Invocation (CPI)
-sidebarLabel: Cross Program Invocation
+title: Вызов кросс-программы (Cross Program Invocation=CPI)
+sidebarLabel: Вызов кросс-программы
 sidebarSortOrder: 6
 ---
 
-A Cross Program Invocation (CPI) refers to when one program invokes the
-instructions of another program. This mechanism allows for the composability of
-Solana programs.
+Вызов кросс-программ (CPI) относится к ситуации, 
+когда одна программа вызывает инструкции другой программы. 
+Этот механизм обеспечивает компоновку программ Solana.
 
-You can think of instructions as API endpoints that a program exposes to the
-network and a CPI as one API internally invoking another API.
+Вы можете думать об инструкциях как о конечных точках API, 
+которые программа предоставляет сети, 
+а CPI — как об одном API, вызывающем изнутри другой API.
 
-![Cross Program Invocation](/assets/docs/core/cpi/cpi.svg)
+![Вызов кросс-программ](/assets/docs/core/cpi/cpi.svg)
 
-When a program initiates a Cross Program Invocation (CPI) to another program:
+Когда программа инициирует межпрограммный вызов (CPI) для другой программы:
 
-- The signer privileges from the initial transaction invoking the caller program
-  (A) extend to the callee (B) program
-- The callee (B) program can make further CPIs to other programs, up to a
-  maximum depth of 4 (ex. B->C, C->D)
-- The programs can "sign" on behalf of the [PDAs](/docs/core/pda.md) derived
-  from its program ID
+- Привилегии подписчика от начальной транзакции, 
+  вызывающей вызывающую программу (A), распространяются на вызываемую программу (B)
+- Вызываемая программа (B) может выполнять дальнейшие CPI для других программ, 
+  вплоть до максимальной глубины 4 (например, B->C, C->D)
+- Программы могут «подписываться» от имени [PDA](/docs/core/pda.md), 
+  полученных из ее идентификатора программы
 
-> The Solana program runtime defines a constant called
+
+Программа Solana runtime определяет константу max_invoke_stack_height, которая установлена ​​в значение 5
+
+Это представляет максимальную высоту стека вызова инструкций программы. Высота стека начинается с 1 для инструкций транзакции, увеличивается на 1 каждый раз, когда программа вызывает другую инструкцию. Эта настройка фактически ограничивает глубину вызова для CPI до 4.
+
+
+
+> Программа Solana runtime определяет константу
 > [`max_invoke_stack_height`](https://github.com/solana-labs/solana/blob/27eff8408b7223bb3c4ab70523f8a8dca3ca6645/program-runtime/src/compute_budget.rs#L31-L35),
-> which is set to a
-> [value of 5](https://github.com/solana-labs/solana/blob/27eff8408b7223bb3c4ab70523f8a8dca3ca6645/program-runtime/src/compute_budget.rs#L138).
-> This represents the maximum height of the program instruction invocation
-> stack. The stack height begins at 1 for transaction instructions, increases by
-> 1 each time a program invokes another instruction. This setting effectively
-> limits invocation depth for CPIs to 4.
+> которая установлена в
+> [значение 5](https://github.com/solana-labs/solana/blob/27eff8408b7223bb3c4ab70523f8a8dca3ca6645/program-runtime/src/compute_budget.rs#L138).
+> Это представляет максимальную высоту стека вызова инструкций программы. 
+> Высота стека начинается с 1 для инструкций транзакции, увеличивается на 1 каждый раз, 
+> когда программа вызывает другую инструкцию. 
+> Эта настройка фактически ограничивает глубину вызова для CPI до 4.
 
-## Key Points
+## Ключевые моменты
 
-- CPIs enable Solana program instructions to directly invoke instructions on
-  another program.
+- CPI позволяют инструкциям программы Solana напрямую вызывать инструкции 
+  в другой программе.
+- Привилегии подписчика из вызывающей программы распространяются 
+  на вызываемую программу.
+- При создании CPI программы могут «подписываться» от имени КПК, 
+  полученных из их собственного идентификатора программы.
+- Вызываемая программа может создавать дополнительные CPI для других программ,
+  вплоть до максимальной глубины 4.
 
-- Signer privileges from a caller program are extended to the callee program.
+## Как написать CPI
 
-- When making a CPI, programs can "sign" on behalf of PDAs derived from their
-  own program ID.
+Написание инструкции для CPI следует той же схеме, что и создание 
+[инструкции](/docs/core/transactions.md#instruction) для добавления 
+в транзакцию. Под капотом каждая инструкция CPI должна указывать 
+следующую информацию:
 
-- The callee program can make additional CPIs to other programs, up to a maximum
-  depth of 4.
+- **Адрес программы**: указывает вызываемую программу
+- **Учетные записи**: перечисляет все учетные записи, из которых инструкция 
+  считывает или в которые записывает данные, включая другие программы
+- **Данные инструкции**: указывает, какую инструкцию в программе вызывать,
+  а также любые дополнительные данные, требуемые инструкцией (аргументы функции)
 
-## How to write a CPI
+В зависимости от программы, к которой вы делаете вызов, могут быть доступны контейнеры
+со вспомогательными функциями для создания инструкции. Затем программы выполняют CPI, 
+используя одну из следующих функций из контейнера `solana_program`:
 
-Writing an instruction for a CPI follows the same pattern as building an
-[instruction](/docs/core/transactions.md#instruction) to add to a transaction.
-Under the hood, each CPI instruction must specify the following information:
+- `invoke` - используется, когда нет подписчиков PDA
+- `invoke_signed` - используется, когда вызывающей программе необходимо подписать PDA,
+  полученный из ее идентификатора программы
 
-- **Program address**: Specifies the program being invoked
-- **Accounts**: Lists every account the instruction reads from or writes to,
-  including other programs
-- **Instruction Data**: Specifies which instruction on the program to invoke,
-  plus any additional data required by the instruction (function arguments)
+### Базовый CPI
 
-Depending on the program you are making the call to, there may be crates
-available with helper functions for building the instruction. Programs then
-execute CPIs using either one of the following functions from the
-`solana_program` crate:
-
-- `invoke` - used when there are no PDA signers
-- `invoke_signed` - used when the caller program needs to sign with a PDA
-  derived from its program ID
-
-### Basic CPI
-
-The
-[`invoke`](https://github.com/solana-labs/solana/blob/27eff8408b7223bb3c4ab70523f8a8dca3ca6645/sdk/program/src/program.rs#L132)
-function is used when making a CPI that does not require PDA signers. When
-making CPIs, signers provided to the caller program automatically extend to the
-callee program.
+[`Вызов`](https://github.com/solana-labs/solana/blob/27eff8408b7223bb3c4ab70523f8a8dca3ca6645/sdk/program/src/program.rs#L132)
+функции используется при создании CPI, не требующего подписчиков PDA. 
+При создании CPI подписчики, предоставленные вызывающей программе, 
+автоматически распространяются на вызываемую программу.
 
 ```rust
 pub fn invoke(
@@ -80,22 +85,20 @@ pub fn invoke(
 ) -> Result<(), ProgramError>
 ```
 
-Here is an example program on
-[Solana Playground](https://beta.solpg.io/github.com/ZYJLiu/doc-examples/tree/main/cpi-invoke)
-that makes a CPI using the `invoke` function to call the transfer instruction on
-the System Program. You can also reference the
-[Basic CPI guide](/content/guides/getstarted/how-to-cpi.md) for further details.
+Вот пример программы на [Solana Playground](https://beta.solpg.io/github.com/ZYJLiu/doc-examples/tree/main/cpi-invoke), которая создает CPI, используя функцию `invoke` 
+для вызова инструкции передачи в System Program. Вы также можете обратиться к 
+[руководству Basic CPI](/content/guides/getstarted/how-to-cpi.md) 
+для получения дополнительных сведений.
 
 ### CPI with PDA Signer
 
-The
-[`invoke_signed`](https://github.com/solana-labs/solana/blob/27eff8408b7223bb3c4ab70523f8a8dca3ca6645/sdk/program/src/program.rs#L247)
-function is used when making a CPI that requires PDA signers. The seeds used to
-derive the signer PDAs are passed into the `invoke_signed` function as
-`signer_seeds`.
+Функция [`invoke_signed`](https://github.com/solana-labs/solana/blob/27eff8408b7223bb3c4ab70523f8a8dca3ca6645/sdk/program/src/program.rs#L247) 
+используется при создании CPI, требующего подписчиков PDA. 
+Семена, используемые для получения подписчиков PDA, 
+передаются в функцию `invoke_signed` как `signer_seeds`.
 
-You can reference the [Program Derived Address](/docs/core/pda.md) page for
-details on how PDAs are derived.
+Вы можете обратиться к странице [Program Derived Address](/docs/core/pda.md) 
+для получения подробной информации о том, как получаются PDA.
 
 ```rust
 pub fn invoke_signed(
@@ -105,26 +108,27 @@ pub fn invoke_signed(
 ) -> Result<(), ProgramError>
 ```
 
-The runtime uses the privileges granted to the caller program to determine what
-privileges can be extended to the callee. Privileges in this context refer to
-signers and writable accounts. For example, if the instruction the caller is
-processing contains a signer or writable account, then the caller can invoke an
-instruction that also contains that signer and/or writable account.
+Среда выполнения использует привилегии, предоставленные вызывающей программе, 
+чтобы определить, какие привилегии могут быть расширены для вызываемой стороны. 
+Привилегии в этом контексте относятся к подписчикам и доступным для записи учетным записям.
+Например, если инструкция, которую обрабатывает вызывающая сторона, содержит учетную запись
+подписчика или доступную для записи учетную запись, то вызывающая сторона может вызвать
+инструкцию, которая также содержит эту учетную запись подписчика и/или 
+доступную для записи учетную запись.
 
-While PDAs have [no private keys](/docs/core/pda.md#what-is-a-pda), they can
-still act as a signer in an instruction via a CPI. To verify that a PDA is
-derived from the calling program, the seeds used to generate the PDA must be
-included as `signers_seeds`.
+Хотя у PDA нет [личных ключей](/docs/core/pda.md#what-is-a-pda), они все равно 
+могут выступать в качестве подписчика в инструкции через CPI. 
+Чтобы проверить, что PDA получен из вызывающей программы, семена, 
+используемые для генерации PDA, должны быть включены как `signers_seeds`.
 
-When the CPI is processed, the Solana runtime
-[internally calls `create_program_address`](https://github.com/solana-labs/solana/blob/27eff8408b7223bb3c4ab70523f8a8dca3ca6645/programs/bpf_loader/src/syscalls/cpi.rs#L550)
-using the `signers_seeds` and the `program_id` of the calling program. If a
-valid PDA is found, the address is
-[added as a valid signer](https://github.com/solana-labs/solana/blob/27eff8408b7223bb3c4ab70523f8a8dca3ca6645/programs/bpf_loader/src/syscalls/cpi.rs#L552).
+Когда CPI обрабатывается, среда выполнения Solana 
+[внутренне вызывает `create_program_address`](https://github.com/solana-labs/solana/blob/27eff8408b7223bb3c4ab70523f8a8dca3ca6645/programs/bpf_loader/src/syscalls/cpi.rs#L550) 
+с использованием `signers_seeds` и `program_id` вызывающей программы. 
+Если найден действительный PDA, адрес [добавляется как действительный подписывающий](https://github.com/solana-labs/solana/blob/27eff8408b7223bb3c4ab70523f8a8dca3ca6645/programs/bpf_loader/src/syscalls/cpi.rs#L552).
 
-Here is an example program on
-[Solana Playground](https://beta.solpg.io/github.com/ZYJLiu/doc-examples/tree/main/cpi-invoke-signed)
-that makes a CPI using the `invoke_signed` function to call the transfer
-instruction on the System Program with a PDA signer. You can reference the
-[CPI with PDA Signer guide](/content/guides/getstarted/how-to-cpi-with-signer.md)
-for further details.
+Вот пример программы на
+[Solana Playground](https://beta.solpg.io/github.com/ZYJLiu/doc-examples/tree/main/cpi-invoke-signed), 
+которая создает CPI, используя функцию `invoke_signed` для вызова инструкции передачи 
+в системной программе с подписчиком PDA. Вы можете обратиться к 
+[руководству CPI с подписчиком PDA](/content/guides/getstarted/how-to-cpi-with-signer.md) 
+для получения дополнительных сведений.
